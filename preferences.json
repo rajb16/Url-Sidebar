@@ -1,38 +1,20 @@
 [
   {
-    "type": "separator",
-    "label": "Glass Appearance",
-    "id": "glass-sep"
-  },
-  {
-    "property": "extensions.zzz-url-sidebar.tint_color",
-    "label": "Tint / outline color (hex, e.g. #5a96ff)",
+    "property": "mod.urlsidebar.color",
+    "label": "Glass tint / outline color (hex or rgb, e.g. #5a96ff)",
     "type": "string",
-    "default": "#5a96ff"
+    "defaultValue": "#5a96ff"
   },
   {
-    "property": "extensions.zzz-url-sidebar.fill_alpha",
-    "label": "Background opacity",
-    "type": "dropdown",
-    "value": "number",
-    "default": 10,
-    "options": [
-      { "value": 0,  "label": "Fully transparent" },
-      { "value": 10, "label": "Light tint (10%)" },
-      { "value": 20, "label": "Medium tint (20%)" },
-      { "value": 35, "label": "Heavy tint (35%)" }
-    ]
+    "property": "mod.urlsidebar.fillpct",
+    "label": "Background tint strength (e.g. 14%; use 0% for clear glass)",
+    "type": "string",
+    "defaultValue": "14%"
   },
   {
-    "property": "extensions.zzz-url-sidebar.blur_px",
-    "label": "Blur strength",
-    "type": "dropdown",
-    "value": "number",
-    "default": 8,
-    "options": [
-      { "value": 0,  "label": "None" },
-      { "value": 8,  "label": "Subtle" },
-      { "value": 16, "label": "Strong" }
-    ]
+    "property": "mod.urlsidebar.blur",
+    "label": "Blur strength (e.g. 10px; use 0px for no blur)",
+    "type": "string",
+    "defaultValue": "10px"
   }
 ]

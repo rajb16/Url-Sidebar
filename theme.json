@@ -1,17 +1,17 @@
 {
   "id": "zzz-url-sidebar",
   "name": "URL & Sidebar Glass",
-  "description": "Transparent URL bar and sidebar with a blue outline, to match a DWMBlurglass setup.",
+  "description": "Transparent blue glass for the URL bar and compact sidebar, to match a DWMBlurglass setup.",
   "homepage": "https://github.com/rajb16/Url-Sidebar",
   "style": {
     "chrome": "chrome.css",
     "content": ""
   },
+  "preferences": "preferences.json",
   "author": "rajb16",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "tags": [],
   "fork": ["zen"],
   "createdAt": "2026-06-28",
-  "updatedAt": "2026-06-28",
-  "preferences": "preferences.json"
+  "updatedAt": "2026-06-28"
 }

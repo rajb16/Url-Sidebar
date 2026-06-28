@@ -1,20 +1,61 @@
+/* ============================================================
+   URL & Sidebar Glass
+   Blue glass treatment for the Zen URL bar and compact sidebar.
+   Controls (color / tint strength / blur) are driven by the
+   preferences in preferences.json via Sine's pref -> CSS-variable
+   convention (property "mod.urlsidebar.color" -> var(--mod-urlsidebar-color)).
+   ============================================================ */
+
 :root {
-  --glass-fill: var(--zzz-url-sidebar-tint_color, #5a96ff);
+  --glass-color: var(--mod-urlsidebar-color, #5a96ff);
+  --glass-fill-pct: var(--mod-urlsidebar-fillpct, 14%);
+  --glass-blur: var(--mod-urlsidebar-blur, 10px);
 }
 
-/* ---------- URL BAR ---------- */
+/* ---------------------- URL BAR ---------------------- */
+/* Covers resting, open, and hover states so no base color leaks
+   through (incl. the maximized floating pill). */
 #urlbar .urlbar-background,
 #urlbar[open=""] .urlbar-background,
 #urlbar:not([open]) .urlbar-background,
 #urlbar-container:hover .urlbar-background {
-  background: color-mix(in srgb, var(--glass-fill) 12%, transparent) !important;
-  border: 2px solid color-mix(in srgb, var(--glass-fill) 55%, transparent) !important;
+  background: color-mix(in srgb, var(--glass-color) var(--glass-fill-pct), transparent) !important;
+  border: 2px solid color-mix(in srgb, var(--glass-color) 55%, transparent) !important;
   border-radius: 12px !important;
-  backdrop-filter: blur(10px) !important;
-  box-shadow: 0 0 8px color-mix(in srgb, var(--glass-fill) 60%, transparent) !important;
+  backdrop-filter: blur(var(--glass-blur)) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--glass-color) 60%, transparent) !important;
 }
 
-/* ---------- SIDEBAR OUTLINE (Zen Compact Transparent Mode paints the fill) ---------- */
-:root[zen-compact-mode="true"] #titlebar {
-  border: 1px solid color-mix(in srgb, var(--glass-fill) 50%, transparent) !important;
+/* ---------------------- SIDEBAR (compact mode) ---------------------- */
+/* This mod fully owns the sidebar background. Disable
+   "Zen Compact Transparent Mode" so it does not compete for
+   #titlebar::before (that competition causes the 1-second flicker). */
+:root[zen-compact-mode="true"]:not([customizing]) {
+  #titlebar {
+    position: relative !important;
+    border-radius: var(--zen-border-radius, 12px) !important;
+    overflow: hidden !important;
+    border: 1px solid color-mix(in srgb, var(--glass-color) 50%, transparent) !important;
+  }
+
+  #titlebar::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: color-mix(in srgb, var(--glass-color) var(--glass-fill-pct), transparent) !important;
+    backdrop-filter: blur(var(--glass-blur)) !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+  }
 }
+
+/* ---------------------- OPTIONAL FALLBACK ----------------------
+   If, after disabling Zen Compact Transparent Mode, the sidebar
+   shows Zen's DEFAULT background instead of your blue glass (i.e.
+   the ::before is hidden behind the default), uncomment the block
+   below to clear the default so yours is the only one. */
+/*
+:root[zen-compact-mode="true"] .zen-browser-generic-background.zen-toolbar-background {
+  background: transparent !important;
+}
+*/
