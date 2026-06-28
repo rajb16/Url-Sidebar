@@ -1,29 +1,14 @@
 :root {
-  --glass-fill: rgba(30, 50, 90, 0.10);
-  --glass-border: rgba(90, 150, 255, 0.45);
+  --glass-fill: rgba(30, 50, 90, 0.12);
+  --glass-border: rgba(90, 150, 255, 0.55);
 }
 
-/* Sidebar / tab strip: fill only, NO border */
-#navigator-toolbox,
-#titlebar,
-#TabsToolbar {
+/* Match Neo-Zen's own selector depth so we override it */
+#urlbar .urlbar-background,
+#urlbar[open=""] .urlbar-background,
+#urlbar-container:hover .urlbar-background {
   background: var(--glass-fill) !important;
-}
-
-/* URL bar surface: this is the ONLY thing that gets an outline */
-#urlbar-background {
-  background: var(--glass-fill) !important;
-  border: 1px solid var(--glass-border) !important;
-  box-shadow: 0 0 12px rgba(90, 150, 255, 0.20) !important;
-  backdrop-filter: blur(8px) !important;
-}
-
-/* nav-bar: fill only, NO border (this was likely the wireframe culprit) */
-#nav-bar {
-  background: var(--glass-fill) !important;
-}
-
-#navigator-toolbox::before,
-#navigator-toolbox::after {
-  background: transparent !important;
+  border: 2px solid var(--glass-border) !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--glass-border) 60%, transparent) !important;
 }
