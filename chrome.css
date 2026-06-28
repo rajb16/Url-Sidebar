@@ -1,22 +1,20 @@
 :root {
-  --glass-border: rgba(90, 150, 255, 0.55);
-  --glass-fill: rgba(30, 50, 90, 0.12);
+  --glass-fill: var(--zzz-url-sidebar-tint_color, #5a96ff);
 }
 
-/* ---------- URL BAR (overrides Neo-Zen) ---------- */
+/* ---------- URL BAR ---------- */
 #urlbar .urlbar-background,
 #urlbar[open=""] .urlbar-background,
 #urlbar:not([open]) .urlbar-background,
 #urlbar-container:hover .urlbar-background {
-  background: var(--glass-fill) !important;
-  border: 2px solid var(--glass-border) !important;
-  border-radius: var(--Neo-Border-Radius, 12px) !important;
+  background: color-mix(in srgb, var(--glass-fill) 12%, transparent) !important;
+  border: 2px solid color-mix(in srgb, var(--glass-fill) 55%, transparent) !important;
+  border-radius: 12px !important;
   backdrop-filter: blur(10px) !important;
-  box-shadow: 0 0 8px color-mix(in srgb, var(--glass-border) 60%, transparent) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--glass-fill) 60%, transparent) !important;
 }
 
-/* ---------- SIDEBAR (tints Nebula's existing glass) ---------- */
-html[nebula-compact-mode] #titlebar > .zen-browser-generic-background {
-  background-color: var(--glass-fill) !important;
-  border: 1px solid var(--glass-border) !important;
+/* ---------- SIDEBAR OUTLINE (Zen Compact Transparent Mode paints the fill) ---------- */
+:root[zen-compact-mode="true"] #titlebar {
+  border: 1px solid color-mix(in srgb, var(--glass-fill) 50%, transparent) !important;
 }
