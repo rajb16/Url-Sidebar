@@ -6,10 +6,10 @@
     "defaultValue": "#5a96ff"
   },
   {
-    "property": "mod.urlsidebar.fillpct",
-    "label": "Background tint strength (e.g. 14%; use 0% for clear glass)",
+    "property": "mod.urlsidebar.transparent",
+    "label": "Transparency (e.g. 80% = mostly clear, 20% = mostly solid)",
     "type": "string",
-    "defaultValue": "14%"
+    "defaultValue": "80%"
   },
   {
     "property": "mod.urlsidebar.blur",
