@@ -12,5 +12,6 @@
   "tags": [],
   "fork": ["zen"],
   "createdAt": "2026-06-28",
-  "updatedAt": "2026-06-28"
+  "updatedAt": "2026-06-28",
+  "preferences": "preferences.json"
 }
