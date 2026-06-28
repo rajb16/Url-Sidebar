@@ -1,32 +1,26 @@
-/* ===== zzz-glass-override: transparent URL bar + sidebar, blue outline ===== */
 :root {
-  --my-glass-fill: rgba(30, 50, 90, 0.10);
-  --my-glass-border: rgba(90, 150, 255, 0.45);
+  --glass-fill: rgba(30, 50, 90, 0.10);
+  --glass-border: rgba(90, 150, 255, 0.45);
 }
 
+/* Sidebar / tab strip: fill only, NO border */
 #navigator-toolbox,
 #titlebar,
-#TabsToolbar,
-.zen-sidebar-web-panel,
-#zen-sidebar-web-panel {
-  background: var(--my-glass-fill) !important;
+#TabsToolbar {
+  background: var(--glass-fill) !important;
 }
 
-#urlbar,
-#urlbar-background,
-#urlbar[breakout][breakout-extend] > #urlbar-background {
-  background: var(--my-glass-fill) !important;
-  border: 1px solid var(--my-glass-border) !important;
-  box-shadow: 0 0 0 1px var(--my-glass-border),
-              0 0 12px rgba(90, 150, 255, 0.20) !important;
+/* URL bar surface: this is the ONLY thing that gets an outline */
+#urlbar-background {
+  background: var(--glass-fill) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: 0 0 12px rgba(90, 150, 255, 0.20) !important;
   backdrop-filter: blur(8px) !important;
 }
 
-#nav-bar,
-#nav-bar-customization-target,
-.browser-toolbar {
-  background: var(--my-glass-fill) !important;
-  border: 1px solid var(--my-glass-border) !important;
+/* nav-bar: fill only, NO border (this was likely the wireframe culprit) */
+#nav-bar {
+  background: var(--glass-fill) !important;
 }
 
 #navigator-toolbox::before,
