@@ -1,14 +1,22 @@
 :root {
-  --glass-fill: rgba(30, 50, 90, 0.12);
   --glass-border: rgba(90, 150, 255, 0.55);
+  --glass-fill: rgba(30, 50, 90, 0.12);
 }
 
-/* Match Neo-Zen's own selector depth so we override it */
+/* ---------- URL BAR (overrides Neo-Zen) ---------- */
 #urlbar .urlbar-background,
 #urlbar[open=""] .urlbar-background,
+#urlbar:not([open]) .urlbar-background,
 #urlbar-container:hover .urlbar-background {
   background: var(--glass-fill) !important;
   border: 2px solid var(--glass-border) !important;
+  border-radius: var(--Neo-Border-Radius, 12px) !important;
   backdrop-filter: blur(10px) !important;
   box-shadow: 0 0 8px color-mix(in srgb, var(--glass-border) 60%, transparent) !important;
+}
+
+/* ---------- SIDEBAR (tints Nebula's existing glass) ---------- */
+html[nebula-compact-mode] #titlebar > .zen-browser-generic-background {
+  background-color: var(--glass-fill) !important;
+  border: 1px solid var(--glass-border) !important;
 }
