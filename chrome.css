@@ -1,0 +1,35 @@
+/* ===== zzz-glass-override: transparent URL bar + sidebar, blue outline ===== */
+:root {
+  --my-glass-fill: rgba(30, 50, 90, 0.10);
+  --my-glass-border: rgba(90, 150, 255, 0.45);
+}
+
+#navigator-toolbox,
+#titlebar,
+#TabsToolbar,
+.zen-sidebar-web-panel,
+#zen-sidebar-web-panel {
+  background: var(--my-glass-fill) !important;
+}
+
+#urlbar,
+#urlbar-background,
+#urlbar[breakout][breakout-extend] > #urlbar-background {
+  background: var(--my-glass-fill) !important;
+  border: 1px solid var(--my-glass-border) !important;
+  box-shadow: 0 0 0 1px var(--my-glass-border),
+              0 0 12px rgba(90, 150, 255, 0.20) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+#nav-bar,
+#nav-bar-customization-target,
+.browser-toolbar {
+  background: var(--my-glass-fill) !important;
+  border: 1px solid var(--my-glass-border) !important;
+}
+
+#navigator-toolbox::before,
+#navigator-toolbox::after {
+  background: transparent !important;
+}

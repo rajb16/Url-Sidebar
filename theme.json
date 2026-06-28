@@ -1,0 +1,17 @@
+{
+  "id": "Url-Sidebar",
+  "name": "Glass Override",
+  "description": "Personal transparency and blue-outline tweaks for the URL bar and sidebar.",
+  "homepage": "",
+  "style": {
+    "chrome": "chrome.css",
+    "content": ""
+  },
+  "author": "rxj",
+  "version": "1.0.0",
+  "tags": [],
+  "fork": ["zen"],
+  "createdAt": "2026-06-28",
+  "updatedAt": "2026-06-28",
+  "enabled": true
+}
