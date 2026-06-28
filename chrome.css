@@ -13,8 +13,6 @@
 }
 
 /* ---------------------- URL BAR ---------------------- */
-/* Covers resting, open, and hover states so no base color leaks
-   through (incl. the maximized floating pill). */
 #urlbar .urlbar-background,
 #urlbar[open=""] .urlbar-background,
 #urlbar:not([open]) .urlbar-background,
@@ -27,9 +25,17 @@
 }
 
 /* ---------------------- SIDEBAR (compact mode) ---------------------- */
-/* This mod fully owns the sidebar background. Disable
-   "Zen Compact Transparent Mode" so it does not compete for
-   #titlebar::before (that competition causes the 1-second flicker). */
+/* Clear Zen's default toolbar/titlebar backgrounds so OUR ::before
+   glass is the only fill. Without this, the default opaque background
+   sits in front of ::before and hides the tint/blur (outline still
+   shows because it is on #titlebar's border). */
+:root[zen-compact-mode="true"] .zen-browser-generic-background,
+:root[zen-compact-mode="true"] .zen-browser-generic-background.zen-toolbar-background,
+:root[zen-compact-mode="true"] #titlebar > .zen-browser-generic-background {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
 :root[zen-compact-mode="true"]:not([customizing]) {
   #titlebar {
     position: relative !important;
@@ -48,14 +54,3 @@
     pointer-events: none !important;
   }
 }
-
-/* ---------------------- OPTIONAL FALLBACK ----------------------
-   If, after disabling Zen Compact Transparent Mode, the sidebar
-   shows Zen's DEFAULT background instead of your blue glass (i.e.
-   the ::before is hidden behind the default), uncomment the block
-   below to clear the default so yours is the only one. */
-/*
-:root[zen-compact-mode="true"] .zen-browser-generic-background.zen-toolbar-background {
-  background: transparent !important;
-}
-*/
