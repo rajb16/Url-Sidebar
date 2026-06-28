@@ -1,17 +1,16 @@
 {
-  "id": "Url-Sidebar",
-  "name": "Glass Override",
-  "description": "Personal transparency and blue-outline tweaks for the URL bar and sidebar.",
-  "homepage": "",
+  "id": "zzz-url-sidebar",
+  "name": "URL & Sidebar Glass",
+  "description": "Transparent URL bar and sidebar with a blue outline, to match a DWMBlurglass setup.",
+  "homepage": "https://github.com/rajb16/Url-Sidebar",
   "style": {
     "chrome": "chrome.css",
     "content": ""
   },
-  "author": "rxj",
+  "author": "rajb16",
   "version": "1.0.0",
   "tags": [],
   "fork": ["zen"],
   "createdAt": "2026-06-28",
-  "updatedAt": "2026-06-28",
-  "enabled": true
+  "updatedAt": "2026-06-28"
 }
