@@ -1,0 +1,38 @@
+[
+  {
+    "type": "separator",
+    "label": "Glass Appearance",
+    "id": "glass-sep"
+  },
+  {
+    "property": "extensions.zzz-url-sidebar.tint_color",
+    "label": "Tint / outline color (hex, e.g. #5a96ff)",
+    "type": "string",
+    "default": "#5a96ff"
+  },
+  {
+    "property": "extensions.zzz-url-sidebar.fill_alpha",
+    "label": "Background opacity",
+    "type": "dropdown",
+    "value": "number",
+    "default": 10,
+    "options": [
+      { "value": 0, "label": "Fully transparent" },
+      { "value": 10, "label": "Light tint (10%)" },
+      { "value": 20, "label": "Medium tint (20%)" },
+      { "value": 35, "label": "Heavy tint (35%)" }
+    ]
+  },
+  {
+    "property": "extensions.zzz-url-sidebar.blur_px",
+    "label": "Blur strength",
+    "type": "dropdown",
+    "value": "number",
+    "default": 8,
+    "options": [
+      { "value": 0, "label": "None" },
+      { "value": 8, "label": "Subtle" },
+      { "value": 16, "label": "Strong" }
+    ]
+  }
+]
