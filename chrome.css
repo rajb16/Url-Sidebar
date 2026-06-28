@@ -1,18 +1,25 @@
 /* ============================================================
    URL & Sidebar Glass
    Blue glass for the Zen URL bar and compact sidebar.
-   Sidebar technique adapted from Zen Compact Transparent Mode:
-   the real toolbar background is removed with display:none and a
-   custom ::before is painted in its place.
+   - Independent tint vs outline colors and opacities
+   - Animation-state guards so the blur is not stripped after load
+   - Legibility boost for unloaded/discarded tabs over bright pages
    Controls live in preferences.json (mod.urlsidebar.* -> --mod-urlsidebar-*).
    ============================================================ */
 
 :root {
-  --glass-color: var(--mod-urlsidebar-color, #5a96ff);
-  /* transparentvalue: how transparent the fill is (e.g. 80% = mostly clear,
-     20% = mostly solid). Matches the Compact mod's "transparent percentage". */
-  --glass-transparent: var(--mod-urlsidebar-transparent, 80%);
-  --glass-blur: var(--mod-urlsidebar-blur, 10px);
+  /* Fill (tint) */
+  --us-tint-color:   var(--mod-urlsidebar-tintcolor, #5a96ff);
+  --us-tint-trans:   var(--mod-urlsidebar-tinttransparent, 82%);  /* % transparent */
+  /* Outline */
+  --us-outline-color: var(--mod-urlsidebar-outlinecolor, #5a96ff);
+  --us-outline-trans: var(--mod-urlsidebar-outlinetransparent, 45%);
+  /* Blur */
+  --us-blur: var(--mod-urlsidebar-blur, 10px);
+
+  /* Derived (do not edit) */
+  --us-fill: color-mix(in srgb, var(--us-tint-color), transparent var(--us-tint-trans));
+  --us-outline: color-mix(in srgb, var(--us-outline-color), transparent var(--us-outline-trans));
 }
 
 /* ---------------------- URL BAR ---------------------- */
@@ -20,65 +27,67 @@
 #urlbar[open=""] .urlbar-background,
 #urlbar:not([open]) .urlbar-background,
 #urlbar-container:hover .urlbar-background {
-  background: color-mix(in srgb, var(--glass-color), transparent var(--glass-transparent)) !important;
-  border: 2px solid color-mix(in srgb, var(--glass-color) 55%, transparent) !important;
+  background: var(--us-fill) !important;
+  border: 2px solid var(--us-outline) !important;
   border-radius: 12px !important;
-  backdrop-filter: blur(var(--glass-blur)) !important;
-  box-shadow: 0 0 8px color-mix(in srgb, var(--glass-color) 60%, transparent) !important;
+  backdrop-filter: blur(var(--us-blur)) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--us-outline-color) 60%, transparent) !important;
 }
 
 /* ---------------------- SIDEBAR (compact mode) ----------------------
-   Mirrors Zen Compact Transparent Mode's working approach. */
+   Remove the real background; paint our own ::before. The selector
+   intentionally does NOT exclude animation states, and we also paint
+   on the animating element, so the blur is not dropped after the
+   compact-mode animation finishes (cause of the 1-second flicker). */
 @media (-moz-bool-pref: "zen.view.compact.hide-tabbar") {
-  /* Remove the real background entirely (NOT just transparent). */
   .zen-browser-generic-background.zen-toolbar-background {
     display: none !important;
-  }
-
-  #titlebar {
-    position: relative !important;
-    border-radius: var(--zen-border-radius) !important;
-    overflow: hidden !important;
-    border: 1px solid color-mix(in srgb, var(--glass-color) 50%, transparent) !important;
-  }
-
-  #titlebar::before {
-    content: "" !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: color-mix(in srgb, var(--glass-color), transparent var(--glass-transparent)) !important;
-    backdrop-filter: blur(var(--glass-blur)) !important;
-    z-index: -1 !important;
-    pointer-events: none !important;
   }
 }
 
-/* ---------------------- SIDEBAR FALLBACK ----------------------
-   If you do NOT run compact mode with "hide tab bar" enabled, the
-   block above won't apply. This non-gated version covers that case.
-   If the gated block works, this is harmless. */
-:root[zen-compact-mode="true"]:not([customizing]) {
-  .zen-browser-generic-background.zen-toolbar-background {
-    display: none !important;
-  }
+:root[zen-compact-mode="true"] #titlebar,
+:root[zen-compact-mode="true"] #navigator-toolbox[animate="true"] #titlebar {
+  position: relative !important;
+  border-radius: var(--zen-border-radius, 12px) !important;
+  overflow: hidden !important;
+  border: 1px solid var(--us-outline) !important;
+}
 
-  #titlebar {
-    position: relative !important;
-    border-radius: var(--zen-border-radius, 12px) !important;
-    overflow: hidden !important;
-    border: 1px solid color-mix(in srgb, var(--glass-color) 50%, transparent) !important;
-  }
+:root[zen-compact-mode="true"] #titlebar::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: var(--us-fill) !important;
+  backdrop-filter: blur(var(--us-blur)) !important;
+  -webkit-backdrop-filter: blur(var(--us-blur)) !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  /* Keep it painted through/after the compact animation. */
+  transition: none !important;
+}
 
-  #titlebar::before {
-    content: "" !important;
-    position: absolute !important;
-    inset: 0 !important;
-    background: color-mix(in srgb, var(--glass-color), transparent var(--glass-transparent)) !important;
-    backdrop-filter: blur(var(--glass-blur)) !important;
-    z-index: -1 !important;
-    pointer-events: none !important;
-  }
+/* Belt-and-suspenders: also clear default bg without the pref gate,
+   in case hide-tabbar is off. */
+:root[zen-compact-mode="true"] .zen-browser-generic-background.zen-toolbar-background {
+  display: none !important;
+}
+
+/* ---------------------- UNLOADED TAB LEGIBILITY ----------------------
+   Discarded/pending tabs render faint; over a transparent sidebar on a
+   bright page they wash out. Give them a subtle backing + firmer text. */
+.tabbrowser-tab[pending] .tab-content,
+.tabbrowser-tab[discarded] .tab-content {
+  background: color-mix(in srgb, #000, transparent 70%) !important;
+  border-radius: 8px !important;
+}
+
+.tabbrowser-tab[pending] .tab-label,
+.tabbrowser-tab[discarded] .tab-label {
+  opacity: 1 !important;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8) !important;
+}
+
+.tabbrowser-tab[pending] .tab-icon-image,
+.tabbrowser-tab[discarded] .tab-icon-image {
+  opacity: 0.95 !important;
 }
