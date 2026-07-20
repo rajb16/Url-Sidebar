@@ -187,10 +187,21 @@
    child and crushed this mod's background fill along with it
    regardless of the fill's own alpha. Restore the tab's own opacity
    so the background renders at full strength, and put the "asleep"
-   cue on muted grey border/label/icon instead. */
+   cue on muted grey border/label/icon instead.
+
+   filter: none is just as load-bearing as the opacity reset above and
+   was missing until now: Zen also applies its own native filter (looks
+   like a grayscale/desaturation) to the whole [pending]/[discarded]
+   element, not just opacity. filter applies to everything painted
+   inside the element's box, INCLUDING borders set by other CSS (like
+   Zen-Tab-Groups' own group-color border-left/right) - confirmed live,
+   the "wrong" border color on unloaded tabs tracked the LUMINANCE of
+   each group color (yellow read as near-white, red as dark grey), the
+   exact signature of grayscale conversion, not a data/attribute bug. */
 .tabbrowser-tab[pending],
 .tabbrowser-tab[discarded] {
   opacity: 1 !important;
+  filter: none !important;
 }
 
 .tabbrowser-tab[pending] .tab-stack .tab-background,
