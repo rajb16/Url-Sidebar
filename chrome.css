@@ -1,12 +1,12 @@
 /* ============================================================
    URL & Sidebar Glass -> Cyberpunk Terminal
    Full repaint: no transparency/blur anywhere, solid black panels
-   with neon cyan/yellow/red accents. The old "glass" concept (blue
-   tint, then a purple gradient) is gone - see git history if it's
-   ever wanted back.
-   - Cyan:   default/idle neon accent (borders, glows)
-   - Yellow: hover/interaction accent
-   - Red:    the currently active/selected tab
+   with neon red/yellow/cyan accents, styled after the Cyberpunk 2077
+   menu (dim red idle chrome + red scanlines, one bright cyan
+   highlight for whatever's actually active, yellow for interaction).
+   - Red:    default/idle neon accent (URL bar, sidebar panel, idle tabs)
+   - Yellow: hover accent, and the URL bar's typed text
+   - Cyan:   the currently active/selected tab only
    - Black:  every fill, fully opaque - no backdrop-filter needed or
      used anywhere in this file. (Earlier attempts at backdrop-filter
      on chrome elements over real web content never worked reliably -
@@ -34,12 +34,12 @@
     0 100%,
     0 var(--cp-cut)
   );
-  /* Faint scanline texture for panel backgrounds - subtle (3% alpha),
-     decorative only. */
+  /* Faint scanline texture for panel backgrounds - subtle (4% alpha),
+     decorative only, tinted to match the idle red accent. */
   --cp-scanlines: repeating-linear-gradient(
     0deg,
-    color-mix(in srgb, var(--cp-cyan) 4%, transparent) 0px,
-    color-mix(in srgb, var(--cp-cyan) 4%, transparent) 1px,
+    color-mix(in srgb, var(--cp-red) 4%, transparent) 0px,
+    color-mix(in srgb, var(--cp-red) 4%, transparent) 1px,
     transparent 1px,
     transparent 3px
   );
@@ -51,18 +51,18 @@
 #urlbar:not([open]) .urlbar-background,
 #urlbar-container:hover .urlbar-background {
   background: var(--cp-scanlines), var(--cp-black) !important;
-  border: 2px solid var(--cp-cyan) !important;
+  border: 2px solid var(--cp-red) !important;
   border-radius: 2px !important;
   clip-path: var(--cp-clip);
-  box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-cyan) 70%, transparent),
-    inset 0 0 calc(var(--cp-glow) / 2) color-mix(in srgb, var(--cp-cyan) 25%, transparent) !important;
+  box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-red) 70%, transparent),
+    inset 0 0 calc(var(--cp-glow) / 2) color-mix(in srgb, var(--cp-red) 25%, transparent) !important;
 }
 
 #urlbar-input {
   text-align: center !important;
   font-family: "Consolas", "Courier New", monospace !important;
-  color: var(--cp-cyan) !important;
-  text-shadow: 0 0 4px color-mix(in srgb, var(--cp-cyan) 60%, transparent) !important;
+  color: var(--cp-yellow) !important;
+  text-shadow: 0 0 4px color-mix(in srgb, var(--cp-yellow) 60%, transparent) !important;
 }
 
 /* ---------------------- SIDEBAR (compact mode) ----------------------
@@ -82,8 +82,8 @@
   position: absolute !important;
   inset: 0 !important;
   background: var(--cp-scanlines), var(--cp-black) !important;
-  border: 2px solid var(--cp-cyan) !important;
-  box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-cyan) 50%, transparent) !important;
+  border: 2px solid var(--cp-red) !important;
+  box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-red) 50%, transparent) !important;
   z-index: -1 !important;
   pointer-events: none !important;
   transition: none !important;
@@ -112,34 +112,39 @@
    plate hacks are gone, replaced with a plain neon glow for style.
 
    Group identity (Zen-Tab-Groups' --group-color) still shows up via
-   that mod's own left-border strip on the outer tab element; this
-   mod only paints the inner .tab-stack .tab-background, so both
-   coexist without fighting each other. */
+   that mod's own border on the outer tab element; this mod only
+   paints the inner .tab-stack .tab-background, so both coexist
+   without fighting each other. */
+
+/* Idle (default) label/icon glow: red. Selected tab overrides both to
+   cyan below - kept as separate, more specific rules (rather than
+   this base rule trying to exclude [selected] itself) since text-shadow
+   and filter here are single-value properties a more specific selector
+   can cleanly replace outright. */
 .tabbrowser-tab .tab-label {
   font-family: "Consolas", "Courier New", monospace !important;
   letter-spacing: 0.3px !important;
-  text-shadow: 0 0 3px color-mix(in srgb, var(--cp-cyan) 50%, transparent) !important;
+  text-shadow: 0 0 3px color-mix(in srgb, var(--cp-red) 50%, transparent) !important;
 }
 
 .tabbrowser-tab .tab-icon-image {
-  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--cp-cyan) 60%, transparent)) !important;
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--cp-red) 60%, transparent)) !important;
 }
 
-/* Default (idle) tab: solid black, dim cyan border, no glow - kept
+/* Default (idle) tab: solid black, dim red border, no glow - kept
    deliberately subdued so group headers (which keep full brightness)
    read as the pronounced element and idle tabs recede.
 
    :not([pending]):not([discarded]) here is load-bearing, not
    decoration: without it, this selector's two extra :not() clauses
    give it HIGHER specificity than the plain-attribute [pending]/
-   [discarded] selectors below, so it was winning on asleep tabs too
-   and painting them with the bright idle style regardless of source
-   order - confirmed live, asleep tabs showed the full-brightness idle
-   border instead of the muted asleep one. */
+   [discarded] selectors below, so it would win on asleep tabs too and
+   paint them with the bright idle style regardless of source order -
+   confirmed live once already with the old cyan idle style. */
 .tabbrowser-tab:not([selected]):not([multiselected]):not([pending]):not([discarded]) .tab-stack .tab-background,
 #navigator-toolbox[animate="true"] .tabbrowser-tab:not([selected]):not([multiselected]):not([pending]):not([discarded]) .tab-stack .tab-background {
   background: var(--cp-black) !important;
-  border: 1px solid color-mix(in srgb, var(--cp-cyan) 35%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--cp-red) 35%, transparent) !important;
   border-radius: 2px !important;
   box-shadow: none !important;
   transition: none !important;
@@ -153,20 +158,27 @@
   box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-yellow) 55%, transparent) !important;
 }
 
-/* Active/selected tab: red accent, the "you are here" marker. */
+/* Active/selected tab: cyan accent, the "you are here" marker -
+   matches the Cyberpunk menu reference where the selected item gets
+   the one bright cyan highlight against otherwise red/dim chrome. */
 .tabbrowser-tab[selected] .tab-stack .tab-background,
 .tabbrowser-tab[multiselected] .tab-stack .tab-background {
   background: var(--cp-black) !important;
-  border: 1px solid var(--cp-red) !important;
+  border: 1px solid var(--cp-cyan) !important;
   border-radius: 2px !important;
-  box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-red) 65%, transparent),
-    inset 0 0 calc(var(--cp-glow) / 2) color-mix(in srgb, var(--cp-red) 20%, transparent) !important;
+  box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-cyan) 65%, transparent),
+    inset 0 0 calc(var(--cp-glow) / 2) color-mix(in srgb, var(--cp-cyan) 20%, transparent) !important;
 }
 
 .tabbrowser-tab[selected] .tab-label,
 .tabbrowser-tab[multiselected] .tab-label {
-  color: var(--cp-red) !important;
-  text-shadow: 0 0 4px color-mix(in srgb, var(--cp-red) 60%, transparent) !important;
+  color: var(--cp-cyan) !important;
+  text-shadow: 0 0 4px color-mix(in srgb, var(--cp-cyan) 60%, transparent) !important;
+}
+
+.tabbrowser-tab[selected] .tab-icon-image,
+.tabbrowser-tab[multiselected] .tab-icon-image {
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--cp-cyan) 70%, transparent)) !important;
 }
 
 /* This was never actually a timing/animation bug: Firefox/Zen dims an

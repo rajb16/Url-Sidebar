@@ -12,19 +12,19 @@
   },
   {
     "property": "mod.urlsidebar.cyancolor",
-    "label": "Default/idle neon accent (borders, glows)",
+    "label": "Active/selected tab accent color",
     "type": "string",
     "defaultValue": "#00fff2"
   },
   {
     "property": "mod.urlsidebar.yellowcolor",
-    "label": "Hover accent color",
+    "label": "Hover accent color, and the URL bar's typed text",
     "type": "string",
     "defaultValue": "#fcee0a"
   },
   {
     "property": "mod.urlsidebar.redcolor",
-    "label": "Active/selected tab accent color",
+    "label": "Default/idle neon accent (URL bar, sidebar panel, idle tabs)",
     "type": "string",
     "defaultValue": "#ff003c"
   },

@@ -1,7 +1,7 @@
 {
   "id": "zzz-url-sidebar",
   "name": "URL & Sidebar Cyberpunk",
-  "description": "Cyberpunk terminal theme for the Zen URL bar and compact sidebar - solid black panels, neon cyan/yellow/red accents, no transparency.",
+  "description": "Cyberpunk terminal theme for the Zen URL bar and compact sidebar - solid black panels, red idle chrome, cyan active tab, yellow interaction/URL text, no transparency.",
   "homepage": "https://github.com/rajb16/Url-Sidebar",
   "style": {
     "chrome": "chrome.css",
@@ -9,9 +9,9 @@
   },
   "preferences": "preferences.json",
   "author": "rajb16",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "tags": [],
   "fork": ["zen"],
   "createdAt": "2026-06-28",
-  "updatedAt": "2026-07-20T22:18:54Z"
+  "updatedAt": "2026-07-20T22:44:25Z"
 }
