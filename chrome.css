@@ -3,7 +3,7 @@
    Blue glass for the Zen URL bar and compact sidebar.
    - Independent tint vs outline colors and opacities
    - Animation-state guards so the blur is not stripped after load
-   - Legibility boost for unloaded/discarded tabs over bright pages
+   - Legibility boost for all tabs over bright/busy pages
    Controls live in preferences.json (mod.urlsidebar.* -> --mod-urlsidebar-*).
    ============================================================ */
 
@@ -35,29 +35,42 @@
 }
 
 /* ---------------------- SIDEBAR (compact mode) ----------------------
+   #titlebar is only the top strip of #navigator-toolbox, NOT the whole
+   compact sidebar - painting the glass only on #titlebar (as this used
+   to do) left the entire scrollable tab list underneath it with no
+   blur/tint at all, so pages bled straight through there. The glass
+   ::before now covers #navigator-toolbox itself (the actual full-height
+   sidebar container) instead.
+
    Remove the real background; paint our own ::before. The selector
    intentionally does NOT exclude animation states, and we also paint
    on the animating element, so the blur is not dropped after the
-   compact-mode animation finishes (cause of the 1-second flicker). */
+   compact-mode animation finishes (cause of the original 1-second
+   flicker this mod was built around).
+
+   Deliberately NOT using overflow:hidden on #navigator-toolbox itself
+   (unlike the old #titlebar-only version) - it has real interactive
+   children (hover-preview thumbnails, dropdowns) that may need to
+   render outside its bounds; clipping the whole container could break
+   them. The rounded corners live on the ::before's own box instead. */
 @media (-moz-bool-pref: "zen.view.compact.hide-tabbar") {
   .zen-browser-generic-background.zen-toolbar-background {
     display: none !important;
   }
 }
 
-:root[zen-compact-mode="true"] #titlebar,
-:root[zen-compact-mode="true"] #navigator-toolbox[animate="true"] #titlebar {
+:root[zen-compact-mode="true"] #navigator-toolbox {
   position: relative !important;
-  border-radius: var(--zen-border-radius, 12px) !important;
-  overflow: hidden !important;
-  border: 1px solid var(--us-outline) !important;
 }
 
-:root[zen-compact-mode="true"] #titlebar::before {
+:root[zen-compact-mode="true"] #navigator-toolbox::before,
+:root[zen-compact-mode="true"] #navigator-toolbox[animate="true"]::before {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
   background: var(--us-fill) !important;
+  border: 1px solid var(--us-outline) !important;
+  border-radius: var(--zen-border-radius, 12px) !important;
   backdrop-filter: blur(var(--us-blur)) !important;
   -webkit-backdrop-filter: blur(var(--us-blur)) !important;
   z-index: -1 !important;
@@ -66,15 +79,33 @@
   transition: none !important;
 }
 
+/* #titlebar sits inside #navigator-toolbox and may carry its own opaque
+   background from Zen's native styles - neutralize it so the parent's
+   glass shows through instead of being blocked. */
+:root[zen-compact-mode="true"] #titlebar {
+  background: transparent !important;
+}
+
 /* Belt-and-suspenders: also clear default bg without the pref gate,
    in case hide-tabbar is off. */
 :root[zen-compact-mode="true"] .zen-browser-generic-background.zen-toolbar-background {
   display: none !important;
 }
 
-/* ---------------------- UNLOADED TAB LEGIBILITY ----------------------
-   Discarded/pending tabs render faint; over a transparent sidebar on a
-   bright page they wash out. Give them a subtle backing + firmer text. */
+/* ---------------------- TAB LEGIBILITY ----------------------
+   Any tab - loaded or not - can end up sitting over a bright/busy page
+   peeking through the glass. Give every tab's label/icon a consistent
+   contrast boost so it stays readable regardless of what's behind it. */
+.tabbrowser-tab .tab-label {
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+.tabbrowser-tab .tab-icon-image {
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8)) !important;
+}
+
+/* Discarded/pending tabs render extra faint on top of that - give them
+   a subtle backing plate as well. */
 .tabbrowser-tab[pending] .tab-content,
 .tabbrowser-tab[discarded] .tab-content {
   background: color-mix(in srgb, #000, transparent 70%) !important;
@@ -84,7 +115,6 @@
 .tabbrowser-tab[pending] .tab-label,
 .tabbrowser-tab[discarded] .tab-label {
   opacity: 1 !important;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8) !important;
 }
 
 .tabbrowser-tab[pending] .tab-icon-image,
