@@ -96,32 +96,15 @@
   display: none !important;
 }
 
-/* ---------------------- CONTENT BLUR WHILE SIDEBAR IS SHOWN ----------------------
-   backdrop-filter on the ::before above tries to blur the web page by
-   sampling what's behind a chrome-privileged overlay - Firefox renders
-   chrome UI and page content in separate processes/compositor layers,
-   and that cross-boundary sampling is not reliable (in testing here it
-   produced no visible blur at all regardless of how strong the value
-   was). Directly blurring the content pane itself - the same technique
-   another installed mod uses for its own zoom animation - is a
-   straightforward, reliable substitute: it blurs the source instead of
-   trying to sample it from the overlay.
-
-   [zen-has-hover="true"] / [zen-user-show=""] / [has-popup-menu=""] are
-   the states Zen uses to mark "the compact sidebar is currently
-   revealed" (confirmed via another installed mod's mask-image rule for
-   the same sidebar). */
-:root[zen-compact-mode="true"]:has(
-    #navigator-toolbox[zen-has-hover="true"],
-    [zen-user-show=""],
-    [has-popup-menu=""]
-  )
-  #tabbrowser-tabpanels {
-  filter: blur(var(--us-blur)) brightness(0.75) !important;
-  transition: filter 0.15s ease-in-out !important;
-}
-
 /* ---------------------- TAB LEGIBILITY ----------------------
+   Blurring the whole content pane (an earlier version of this rule
+   did) fixes legibility but blurs the entire page while the sidebar is
+   open, which is heavier-handed than wanted. Scoped to each tab
+   instead: every tab (essential, pinned, or a regular workspace tab -
+   all share the same .tab-stack .tab-background element, confirmed via
+   another installed mod's own tab-background styling) gets its own
+   dark backing plate + optional blur, rather than touching the page.
+
    Any tab - loaded or not - can end up sitting over a bright/busy page
    peeking through the glass. Give every tab's label/icon a consistent
    contrast boost so it stays readable regardless of what's behind it. */
@@ -133,19 +116,23 @@
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8)) !important;
 }
 
-/* Text-shadow alone wasn't enough against busy thumbnails - give every
-   non-selected tab a subtle dark backing plate too (skip [selected]/
-   [multiselected] so the native active-tab highlight isn't fought). */
-.tabbrowser-tab:not([selected]):not([multiselected]) .tab-content {
-  background: color-mix(in srgb, #000, transparent 80%) !important;
+/* Skip [selected]/[multiselected] so the native active-tab highlight
+   isn't fought. backdrop-filter is included as a bonus in case it
+   helps for chrome-behind-chrome cases (essentials/pinned tabs sitting
+   above other sidebar chrome rather than the page) - the background
+   color is what reliably carries the legibility improvement either way. */
+.tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background {
+  background-color: color-mix(in srgb, #000, transparent 72%) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
   border-radius: 8px !important;
 }
 
 /* Discarded/pending tabs render extra faint on top of that - give them
    a stronger backing plate. */
-.tabbrowser-tab[pending] .tab-content,
-.tabbrowser-tab[discarded] .tab-content {
-  background: color-mix(in srgb, #000, transparent 65%) !important;
+.tabbrowser-tab[pending] .tab-stack .tab-background,
+.tabbrowser-tab[discarded] .tab-stack .tab-background {
+  background-color: color-mix(in srgb, #000, transparent 60%) !important;
   border-radius: 8px !important;
 }
 
