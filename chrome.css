@@ -125,18 +125,29 @@
   filter: drop-shadow(0 0 2px color-mix(in srgb, var(--cp-cyan) 60%, transparent)) !important;
 }
 
-/* Default (idle) tab: solid black, cyan neon border. */
-.tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background,
-#navigator-toolbox[animate="true"] .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background {
+/* Default (idle) tab: solid black, dim cyan border, no glow - kept
+   deliberately subdued so group headers (which keep full brightness)
+   read as the pronounced element and idle tabs recede.
+
+   :not([pending]):not([discarded]) here is load-bearing, not
+   decoration: without it, this selector's two extra :not() clauses
+   give it HIGHER specificity than the plain-attribute [pending]/
+   [discarded] selectors below, so it was winning on asleep tabs too
+   and painting them with the bright idle style regardless of source
+   order - confirmed live, asleep tabs showed the full-brightness idle
+   border instead of the muted asleep one. */
+.tabbrowser-tab:not([selected]):not([multiselected]):not([pending]):not([discarded]) .tab-stack .tab-background,
+#navigator-toolbox[animate="true"] .tabbrowser-tab:not([selected]):not([multiselected]):not([pending]):not([discarded]) .tab-stack .tab-background {
   background: var(--cp-black) !important;
-  border: 1px solid var(--cp-cyan) !important;
+  border: 1px solid color-mix(in srgb, var(--cp-cyan) 35%, transparent) !important;
   border-radius: 2px !important;
-  box-shadow: 0 0 calc(var(--cp-glow) / 2) color-mix(in srgb, var(--cp-cyan) 35%, transparent) !important;
+  box-shadow: none !important;
   transition: none !important;
 }
 
-/* Hover: swap to yellow accent. */
-.tabbrowser-tab:hover:not([selected]):not([multiselected]) .tab-stack .tab-background {
+/* Hover: swap to full-brightness yellow accent - this is where idle
+   tabs are allowed to get loud again. */
+.tabbrowser-tab:hover:not([selected]):not([multiselected]):not([pending]):not([discarded]) .tab-stack .tab-background {
   background: var(--cp-black) !important;
   border: 1px solid var(--cp-yellow) !important;
   box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-yellow) 55%, transparent) !important;
@@ -173,7 +184,7 @@
 .tabbrowser-tab[pending] .tab-stack .tab-background,
 .tabbrowser-tab[discarded] .tab-stack .tab-background {
   background: var(--cp-black) !important;
-  border: 1px solid #3a3a40 !important;
+  border: 1px solid #242429 !important;
   border-radius: 2px !important;
   box-shadow: none !important;
   transition: none !important;
