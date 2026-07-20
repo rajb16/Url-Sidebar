@@ -45,9 +45,26 @@
     "defaultValue": "16px"
   },
   {
-    "property": "mod.urlsidebar.tabtintpct",
-    "label": "How strong each awake tab's translucent color tint is (e.g. 26%)",
+    "type": "separator",
+    "label": "Tab gradient",
+    "id": "us-tab-gradient-sep"
+  },
+  {
+    "property": "mod.urlsidebar.gradientstart",
+    "label": "Tab gradient start color (midnight purple by default)",
     "type": "string",
-    "defaultValue": "26%"
+    "defaultValue": "#2d1b4e"
+  },
+  {
+    "property": "mod.urlsidebar.gradientend",
+    "label": "Tab gradient end color",
+    "type": "string",
+    "defaultValue": "#000000"
+  },
+  {
+    "property": "mod.urlsidebar.gradientangle",
+    "label": "Tab gradient direction (e.g. 135deg)",
+    "type": "string",
+    "defaultValue": "135deg"
   }
 ]

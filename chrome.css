@@ -1,24 +1,26 @@
 /* ============================================================
    URL & Sidebar Glass
-   Blue glass for the Zen URL bar; translucent tinted tabs in the
-   compact sidebar (no blur - see note below).
+   Blue glass for the Zen URL bar; midnight-purple-to-black gradient
+   tabs in the compact sidebar (no blur - see note below).
    - URL bar: solid blue glass, backdrop-filter confirmed reliable there
    - Sidebar panel: border wireframe only, no flat fill
-   - Tabs: translucent tint per tab, tinted with each tab's own bar
-     color (--group-color from Zen-Tab-Groups, or the fallback tint).
-     NOT using backdrop-filter here: confirmed live, TWICE, that a
-     chrome-privileged element's backdrop-filter cannot reliably
-     composite against real web-content pixels - once on the whole
-     sidebar panel, once scoped down to a single tab row. Same failure
-     both times (flashes once then vanishes on real pages). This is a
-     Firefox multi-process architecture wall, not a scale problem, so
-     there is no smaller element left to try it on.
+   - Tabs: fixed diagonal gradient fill (90% opaque), group color shows
+     in the border only, not the fill. NOT using backdrop-filter here:
+     confirmed live, TWICE, that a chrome-privileged element's
+     backdrop-filter cannot reliably composite against real web-content
+     pixels - once on the whole sidebar panel, once scoped down to a
+     single tab row. Same failure both times (flashes once then
+     vanishes on real pages). This is a Firefox multi-process
+     architecture wall, not a scale problem, so there is no smaller
+     element left to try it on.
    - Legibility boost for all tabs over bright/busy pages
    Controls live in preferences.json (mod.urlsidebar.* -> --mod-urlsidebar-*).
    ============================================================ */
 
 :root {
-  /* Fill (tint) - blue; violet was tried and rejected. */
+  /* Fill (tint) - blue; violet was tried and rejected (as a flat bright
+     tint - the tab gradient below is a separate, deliberately dark and
+     desaturated purple, not a return to that). */
   --us-tint-color:   var(--mod-urlsidebar-tintcolor, #5a96ff);
   --us-tint-trans:   var(--mod-urlsidebar-tinttransparent, 40%);  /* % transparent */
   /* Outline */
@@ -27,12 +29,27 @@
   /* Blur (URL bar only - the one place backdrop-filter actually works,
      since it's chrome-over-chrome, not chrome-over-content) */
   --us-blur: var(--mod-urlsidebar-blur, 16px);
-  /* Tint strength for individual tab rows */
-  --us-tab-tint-pct: var(--mod-urlsidebar-tabtintpct, 26%);
+  /* Tab background gradient: midnight purple -> black, diagonal */
+  --us-tab-grad-start: var(--mod-urlsidebar-gradientstart, #2d1b4e);
+  --us-tab-grad-end:   var(--mod-urlsidebar-gradientend, #000000);
+  --us-tab-grad-angle: var(--mod-urlsidebar-gradientangle, 135deg);
 
   /* Derived (do not edit) */
   --us-fill: color-mix(in srgb, var(--us-tint-color), transparent var(--us-tint-trans));
   --us-outline: color-mix(in srgb, var(--us-outline-color), transparent var(--us-outline-trans));
+  --us-tab-gradient: linear-gradient(
+    var(--us-tab-grad-angle),
+    color-mix(in srgb, var(--us-tab-grad-start) 90%, transparent),
+    color-mix(in srgb, var(--us-tab-grad-end) 90%, transparent)
+  );
+  /* Dimmer variant for asleep tabs - same hues, lower opacity so they
+     visually recede without relying on the crushed-opacity mechanism
+     that caused the earlier sleeping-tab bug. */
+  --us-tab-gradient-dim: linear-gradient(
+    var(--us-tab-grad-angle),
+    color-mix(in srgb, var(--us-tab-grad-start) 55%, transparent),
+    color-mix(in srgb, var(--us-tab-grad-end) 55%, transparent)
+  );
 }
 
 /* ---------------------- URL BAR ---------------------- */
@@ -140,14 +157,16 @@
 /* Skip [selected]/[multiselected] so the native active-tab highlight
    isn't fought.
 
-   Translucent tint per tab, from the tab's own bar color (Zen-Tab-
-   Groups sets --group-color on grouped tabs; falls back to this mod's
-   own tint for ungrouped tabs), no black mix, no backdrop-filter (see
-   top-of-file note - confirmed twice not to work here at any scale). */
+   Fixed midnight-purple-to-black diagonal gradient fill (90% opaque,
+   no backdrop-filter - see top-of-file note, confirmed twice not to
+   work here at any scale). The tab's own group color still shows up in
+   the border so groups stay distinguishable; the fill itself is the
+   same gradient everywhere for a cohesive dark look instead of every
+   group tinting the whole tab a different hue. */
 .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background,
 #navigator-toolbox[animate="true"] .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background {
   --us-tab-tint: var(--group-color, var(--us-tint-color));
-  background-color: color-mix(in srgb, var(--us-tab-tint) var(--us-tab-tint-pct), transparent) !important;
+  background: var(--us-tab-gradient) !important;
   border: 1px solid color-mix(in srgb, var(--us-tab-tint) 45%, transparent) !important;
   border-radius: 8px !important;
   transition: none !important;
@@ -173,7 +192,7 @@
 .tabbrowser-tab[pending] .tab-stack .tab-background,
 .tabbrowser-tab[discarded] .tab-stack .tab-background {
   --us-tab-tint: var(--group-color, var(--us-tint-color));
-  background-color: color-mix(in srgb, var(--us-tab-tint) 14%, transparent) !important;
+  background: var(--us-tab-gradient-dim) !important;
   border: 1px solid color-mix(in srgb, var(--us-tab-tint) 25%, transparent) !important;
   border-radius: 8px !important;
   transition: none !important;
