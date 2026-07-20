@@ -52,15 +52,19 @@
    (unlike the old #titlebar-only version) - it has real interactive
    children (hover-preview thumbnails, dropdowns) that may need to
    render outside its bounds; clipping the whole container could break
-   them. The rounded corners live on the ::before's own box instead. */
+   them. The rounded corners live on the ::before's own box instead.
+
+   Also deliberately NOT forcing position:relative on #navigator-toolbox
+   (an earlier version of this rule did, and it broke the compact-mode
+   hover overlay - the sidebar started pushing/resizing the page layout
+   instead of floating on top of it). #navigator-toolbox is presumably
+   already position:absolute/fixed natively so the overlay works at
+   all, which is just as valid an anchor for the ::before below as
+   relative would be - so there's nothing to override here. */
 @media (-moz-bool-pref: "zen.view.compact.hide-tabbar") {
   .zen-browser-generic-background.zen-toolbar-background {
     display: none !important;
   }
-}
-
-:root[zen-compact-mode="true"] #navigator-toolbox {
-  position: relative !important;
 }
 
 :root[zen-compact-mode="true"] #navigator-toolbox::before,
