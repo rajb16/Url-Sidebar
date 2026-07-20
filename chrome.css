@@ -123,18 +123,7 @@
    color is what reliably carries the legibility improvement either way.
 
    Fairly opaque on purpose (22% transparent, was 72%) as a general
-   legibility margin.
-
-   Also duplicated for #navigator-toolbox[animate="true"] and given an
-   explicit transition:none, matching the pattern the sidebar-wide
-   glass ::before above already uses. Confirmed live (two screenshots
-   a user provided, same tab list, ~1s apart) that this mod's entire
-   glass effect - both the sidebar-wide tint AND these per-tab
-   backgrounds together - renders correctly for a moment then reverts
-   to fully transparent, which points to something removing/resetting
-   the mod's applied styles wholesale rather than a per-rule contrast
-   problem. Mirroring the one fix already proven to help this class of
-   issue elsewhere in this file is the most targeted next attempt. */
+   legibility margin. */
 .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background,
 #navigator-toolbox[animate="true"] .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background {
   background-color: color-mix(in srgb, #000, transparent 22%) !important;
@@ -144,8 +133,23 @@
   transition: none !important;
 }
 
-/* Discarded/pending tabs render extra faint on top of that - give them
-   a stronger backing plate. */
+/* This was never actually a timing/animation bug: Firefox/Zen dims an
+   entire [pending]/[discarded] ("asleep") tab's opacity as its native
+   "not currently loaded" indicator. Since a parent's opacity multiplies
+   through everything inside it, that dimming was crushing this mod's
+   own background fill down to near-nothing along with it, regardless
+   of how opaque the fill itself was set to - confirmed by the user:
+   the one tab that kept a solid background was the "awake" one, every
+   dimmed/asleep tab around it lost its background. Restore the tab's
+   own opacity so the background renders at full strength, and move
+   the "this is asleep" visual cue to the icon only (desaturate + faint
+   dim) so legibility doesn't ride on the same mechanism as the sleep
+   indicator. */
+.tabbrowser-tab[pending],
+.tabbrowser-tab[discarded] {
+  opacity: 1 !important;
+}
+
 .tabbrowser-tab[pending] .tab-stack .tab-background,
 .tabbrowser-tab[discarded] .tab-stack .tab-background {
   background-color: color-mix(in srgb, #000, transparent 12%) !important;
@@ -160,5 +164,6 @@
 
 .tabbrowser-tab[pending] .tab-icon-image,
 .tabbrowser-tab[discarded] .tab-icon-image {
-  opacity: 0.95 !important;
+  opacity: 0.75 !important;
+  filter: grayscale(0.6) drop-shadow(0 0 2px rgba(0, 0, 0, 0.8)) !important;
 }
