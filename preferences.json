@@ -6,9 +6,9 @@
   },
   {
     "property": "mod.urlsidebar.tintcolor",
-    "label": "Tint color (hex or rgb, e.g. #5a96ff)",
+    "label": "Tint color (hex or rgb, e.g. #8b5cf6)",
     "type": "string",
-    "defaultValue": "#5a96ff"
+    "defaultValue": "#8b5cf6"
   },
   {
     "property": "mod.urlsidebar.tinttransparent",
@@ -23,15 +23,15 @@
   },
   {
     "property": "mod.urlsidebar.outlinecolor",
-    "label": "Outline color (hex or rgb)",
+    "label": "Outline color (hex or rgb, e.g. #a78bfa)",
     "type": "string",
-    "defaultValue": "#5a96ff"
+    "defaultValue": "#a78bfa"
   },
   {
     "property": "mod.urlsidebar.outlinetransparent",
     "label": "Outline transparency (e.g. 45%)",
     "type": "string",
-    "defaultValue": "35%"
+    "defaultValue": "25%"
   },
   {
     "type": "separator",
@@ -40,7 +40,7 @@
   },
   {
     "property": "mod.urlsidebar.blur",
-    "label": "Blur strength (e.g. 16px; use 0px for none)",
+    "label": "Blur strength for the URL bar only (e.g. 16px; use 0px for none). Sidebar/tab blur was removed - it only worked over Zen's own internal pages, never real web content.",
     "type": "string",
     "defaultValue": "16px"
   }

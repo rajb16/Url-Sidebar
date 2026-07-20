@@ -1,6 +1,6 @@
 /* ============================================================
    URL & Sidebar Glass
-   Blue glass for the Zen URL bar and compact sidebar.
+   Violet glass for the Zen URL bar and compact sidebar.
    - Independent tint vs outline colors and opacities
    - Animation-state guards so the blur is not stripped after load
    - Legibility boost for all tabs over bright/busy pages
@@ -8,11 +8,12 @@
    ============================================================ */
 
 :root {
-  /* Fill (tint) */
-  --us-tint-color:   var(--mod-urlsidebar-tintcolor, #5a96ff);
+  /* Fill (tint) - violet/indigo, moved away from the original blue per
+     request ("overall theme is not my fav"). */
+  --us-tint-color:   var(--mod-urlsidebar-tintcolor, #8b5cf6);
   --us-tint-trans:   var(--mod-urlsidebar-tinttransparent, 40%);  /* % transparent */
   /* Outline */
-  --us-outline-color: var(--mod-urlsidebar-outlinecolor, #5a96ff);
+  --us-outline-color: var(--mod-urlsidebar-outlinecolor, #a78bfa);
   --us-outline-trans: var(--mod-urlsidebar-outlinetransparent, 25%);
   /* Blur */
   --us-blur: var(--mod-urlsidebar-blur, 16px);
@@ -41,6 +42,10 @@
   border-radius: 12px !important;
   backdrop-filter: blur(var(--us-blur)) !important;
   box-shadow: 0 0 8px color-mix(in srgb, var(--us-outline-color) 60%, transparent) !important;
+}
+
+#urlbar-input {
+  text-align: center !important;
 }
 
 /* ---------------------- SIDEBAR (compact mode) ----------------------
@@ -84,12 +89,19 @@
   background: var(--us-sidebar-fill) !important;
   border: 1px solid var(--us-outline) !important;
   border-radius: var(--zen-border-radius, 12px) !important;
-  backdrop-filter: blur(var(--us-blur)) !important;
-  -webkit-backdrop-filter: blur(var(--us-blur)) !important;
   z-index: -1 !important;
   pointer-events: none !important;
   /* Keep it painted through/after the compact animation. */
   transition: none !important;
+  /* No backdrop-filter here (deliberately - see below): confirmed live
+     that this mod's blur only ever rendered over Zen's own internal
+     chrome-privileged pages (e.g. about:preferences), never over real
+     web content (e.g. youtube.com) sitting in a separate content
+     process. backdrop-filter can't reliably sample across that
+     boundary, and worse, appears to break the plain background-color
+     on the SAME element too once it fails - so it wasn't just inert,
+     it was actively hurting the one thing (background-color) that did
+     work everywhere. Solid fill only, no blur attempt. */
 }
 
 /* #titlebar sits inside #navigator-toolbox and may carry its own opaque
@@ -126,18 +138,22 @@
 }
 
 /* Skip [selected]/[multiselected] so the native active-tab highlight
-   isn't fought. backdrop-filter is included as a bonus in case it
-   helps for chrome-behind-chrome cases (essentials/pinned tabs sitting
-   above other sidebar chrome rather than the page) - the background
-   color is what reliably carries the legibility improvement either way.
+   isn't fought.
 
    Tinted from the tab's own tab-group color when it has one (Zen-Tab-
    Groups sets --group-color on grouped tabs; falls back to this mod's
-   own blue tint for ungrouped tabs) rather than flat black, so each
-   group keeps some of its own identity instead of the whole sidebar
-   reading as one flat monotone panel. Still dark enough (82% mixed
-   into black, 85% opaque overall) to stay legible - only a hint of hue
-   shows through, not a wash of full color. */
+   own tint for ungrouped tabs) rather than flat black, so each group
+   keeps some of its own identity instead of the whole sidebar reading
+   as one flat monotone panel. Still dark enough (82% mixed into black,
+   85% opaque overall) to stay legible - only a hint of hue shows
+   through, not a wash of full color.
+
+   No backdrop-filter (an earlier version had one "as a bonus" here) -
+   confirmed live that it only ever worked over Zen's own internal
+   chrome pages, never over real web content in a separate content
+   process, and appears to break the background-color on the same
+   element once it fails rather than just doing nothing. Plain
+   background-color is what actually renders reliably everywhere. */
 .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background,
 #navigator-toolbox[animate="true"] .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background {
   --us-tab-tint: var(--group-color, var(--us-tint-color));
@@ -146,8 +162,6 @@
     color-mix(in srgb, var(--us-tab-tint) 18%, black 82%),
     transparent 15%
   ) !important;
-  backdrop-filter: blur(6px) !important;
-  -webkit-backdrop-filter: blur(6px) !important;
   border-radius: 8px !important;
   transition: none !important;
 }
@@ -181,9 +195,14 @@
   transition: none !important;
 }
 
+/* Asleep tabs read with the exact same text color as awake ones,
+   making sleep state hard to tell apart at a glance - grey the label
+   specifically so it's visually distinct, independent of the icon's
+   own desaturation below. */
 .tabbrowser-tab[pending] .tab-label,
 .tabbrowser-tab[discarded] .tab-label {
   opacity: 1 !important;
+  color: #9a9a9a !important;
 }
 
 .tabbrowser-tab[pending] .tab-icon-image,
