@@ -1,70 +1,48 @@
 [
   {
     "type": "separator",
-    "label": "Tint (fill)",
-    "id": "us-tint-sep"
+    "label": "Cyberpunk Palette",
+    "id": "cp-palette-sep"
   },
   {
-    "property": "mod.urlsidebar.tintcolor",
-    "label": "Tint color (hex or rgb, e.g. #5a96ff)",
+    "property": "mod.urlsidebar.blackcolor",
+    "label": "Base fill color (all panels, fully opaque)",
     "type": "string",
-    "defaultValue": "#5a96ff"
+    "defaultValue": "#0a0a0f"
   },
   {
-    "property": "mod.urlsidebar.tinttransparent",
-    "label": "Tint transparency (e.g. 82% = mostly clear, 20% = mostly solid)",
+    "property": "mod.urlsidebar.cyancolor",
+    "label": "Default/idle neon accent (borders, glows)",
     "type": "string",
-    "defaultValue": "40%"
+    "defaultValue": "#00fff2"
+  },
+  {
+    "property": "mod.urlsidebar.yellowcolor",
+    "label": "Hover accent color",
+    "type": "string",
+    "defaultValue": "#fcee0a"
+  },
+  {
+    "property": "mod.urlsidebar.redcolor",
+    "label": "Active/selected tab accent color",
+    "type": "string",
+    "defaultValue": "#ff003c"
   },
   {
     "type": "separator",
-    "label": "Outline",
-    "id": "us-outline-sep"
+    "label": "Effects",
+    "id": "cp-effects-sep"
   },
   {
-    "property": "mod.urlsidebar.outlinecolor",
-    "label": "Outline color (hex or rgb, e.g. #5a96ff)",
+    "property": "mod.urlsidebar.glowintensity",
+    "label": "Neon glow size (e.g. 8px; use 0px for no glow)",
     "type": "string",
-    "defaultValue": "#5a96ff"
+    "defaultValue": "8px"
   },
   {
-    "property": "mod.urlsidebar.outlinetransparent",
-    "label": "Outline transparency (e.g. 45%)",
+    "property": "mod.urlsidebar.cornercut",
+    "label": "Angular corner-cut size for panels/URL bar (e.g. 10px; use 0px for square corners)",
     "type": "string",
-    "defaultValue": "25%"
-  },
-  {
-    "type": "separator",
-    "label": "Blur",
-    "id": "us-blur-sep"
-  },
-  {
-    "property": "mod.urlsidebar.blur",
-    "label": "Blur strength for the URL bar (e.g. 16px; use 0px for none). Tabs don't get a blur option - confirmed backdrop-filter can't render over real web content from a chrome overlay at any scale.",
-    "type": "string",
-    "defaultValue": "16px"
-  },
-  {
-    "type": "separator",
-    "label": "Tab gradient",
-    "id": "us-tab-gradient-sep"
-  },
-  {
-    "property": "mod.urlsidebar.gradientstart",
-    "label": "Tab gradient start color (midnight purple by default)",
-    "type": "string",
-    "defaultValue": "#2d1b4e"
-  },
-  {
-    "property": "mod.urlsidebar.gradientend",
-    "label": "Tab gradient end color",
-    "type": "string",
-    "defaultValue": "#000000"
-  },
-  {
-    "property": "mod.urlsidebar.gradientangle",
-    "label": "Tab gradient direction (e.g. 135deg)",
-    "type": "string",
-    "defaultValue": "135deg"
+    "defaultValue": "10px"
   }
 ]

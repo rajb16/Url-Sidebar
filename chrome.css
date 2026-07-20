@@ -1,54 +1,47 @@
 /* ============================================================
-   URL & Sidebar Glass
-   Blue glass for the Zen URL bar; midnight-purple-to-black gradient
-   tabs in the compact sidebar (no blur - see note below).
-   - URL bar: solid blue glass, backdrop-filter confirmed reliable there
-   - Sidebar panel: border wireframe only, no flat fill
-   - Tabs: fixed diagonal gradient fill (90% opaque), group color shows
-     in the border only, not the fill. NOT using backdrop-filter here:
-     confirmed live, TWICE, that a chrome-privileged element's
-     backdrop-filter cannot reliably composite against real web-content
-     pixels - once on the whole sidebar panel, once scoped down to a
-     single tab row. Same failure both times (flashes once then
-     vanishes on real pages). This is a Firefox multi-process
-     architecture wall, not a scale problem, so there is no smaller
-     element left to try it on.
-   - Legibility boost for all tabs over bright/busy pages
+   URL & Sidebar Glass -> Cyberpunk Terminal
+   Full repaint: no transparency/blur anywhere, solid black panels
+   with neon cyan/yellow/red accents. The old "glass" concept (blue
+   tint, then a purple gradient) is gone - see git history if it's
+   ever wanted back.
+   - Cyan:   default/idle neon accent (borders, glows)
+   - Yellow: hover/interaction accent
+   - Red:    the currently active/selected tab
+   - Black:  every fill, fully opaque - no backdrop-filter needed or
+     used anywhere in this file. (Earlier attempts at backdrop-filter
+     on chrome elements over real web content never worked reliably -
+     confirmed live, twice, at two different element scales - so full
+     opacity sidesteps that problem entirely rather than fighting it.)
    Controls live in preferences.json (mod.urlsidebar.* -> --mod-urlsidebar-*).
    ============================================================ */
 
 :root {
-  /* Fill (tint) - blue; violet was tried and rejected (as a flat bright
-     tint - the tab gradient below is a separate, deliberately dark and
-     desaturated purple, not a return to that). */
-  --us-tint-color:   var(--mod-urlsidebar-tintcolor, #5a96ff);
-  --us-tint-trans:   var(--mod-urlsidebar-tinttransparent, 40%);  /* % transparent */
-  /* Outline */
-  --us-outline-color: var(--mod-urlsidebar-outlinecolor, #5a96ff);
-  --us-outline-trans: var(--mod-urlsidebar-outlinetransparent, 25%);
-  /* Blur (URL bar only - the one place backdrop-filter actually works,
-     since it's chrome-over-chrome, not chrome-over-content) */
-  --us-blur: var(--mod-urlsidebar-blur, 16px);
-  /* Tab background gradient: midnight purple -> black, diagonal */
-  --us-tab-grad-start: var(--mod-urlsidebar-gradientstart, #2d1b4e);
-  --us-tab-grad-end:   var(--mod-urlsidebar-gradientend, #000000);
-  --us-tab-grad-angle: var(--mod-urlsidebar-gradientangle, 135deg);
+  --cp-black:  var(--mod-urlsidebar-blackcolor, #0a0a0f);
+  --cp-cyan:   var(--mod-urlsidebar-cyancolor, #00fff2);
+  --cp-yellow: var(--mod-urlsidebar-yellowcolor, #fcee0a);
+  --cp-red:    var(--mod-urlsidebar-redcolor, #ff003c);
+  --cp-glow:   var(--mod-urlsidebar-glowintensity, 8px);
+  --cp-cut:    var(--mod-urlsidebar-cornercut, 10px);
 
-  /* Derived (do not edit) */
-  --us-fill: color-mix(in srgb, var(--us-tint-color), transparent var(--us-tint-trans));
-  --us-outline: color-mix(in srgb, var(--us-outline-color), transparent var(--us-outline-trans));
-  --us-tab-gradient: linear-gradient(
-    var(--us-tab-grad-angle),
-    color-mix(in srgb, var(--us-tab-grad-start) 90%, transparent),
-    color-mix(in srgb, var(--us-tab-grad-end) 90%, transparent)
+  /* Angular corner-cut shape shared by panels (top-left + bottom-right
+     notched) - the sharp-edged look cyberpunk HUDs use instead of
+     rounded corners. */
+  --cp-clip: polygon(
+    var(--cp-cut) 0,
+    100% 0,
+    100% calc(100% - var(--cp-cut)),
+    calc(100% - var(--cp-cut)) 100%,
+    0 100%,
+    0 var(--cp-cut)
   );
-  /* Dimmer variant for asleep tabs - same hues, lower opacity so they
-     visually recede without relying on the crushed-opacity mechanism
-     that caused the earlier sleeping-tab bug. */
-  --us-tab-gradient-dim: linear-gradient(
-    var(--us-tab-grad-angle),
-    color-mix(in srgb, var(--us-tab-grad-start) 55%, transparent),
-    color-mix(in srgb, var(--us-tab-grad-end) 55%, transparent)
+  /* Faint scanline texture for panel backgrounds - subtle (3% alpha),
+     decorative only. */
+  --cp-scanlines: repeating-linear-gradient(
+    0deg,
+    color-mix(in srgb, var(--cp-cyan) 4%, transparent) 0px,
+    color-mix(in srgb, var(--cp-cyan) 4%, transparent) 1px,
+    transparent 1px,
+    transparent 3px
   );
 }
 
@@ -57,133 +50,121 @@
 #urlbar[open=""] .urlbar-background,
 #urlbar:not([open]) .urlbar-background,
 #urlbar-container:hover .urlbar-background {
-  background: var(--us-fill) !important;
-  border: 2px solid var(--us-outline) !important;
-  border-radius: 12px !important;
-  backdrop-filter: blur(var(--us-blur)) !important;
-  box-shadow: 0 0 8px color-mix(in srgb, var(--us-outline-color) 60%, transparent) !important;
+  background: var(--cp-scanlines), var(--cp-black) !important;
+  border: 2px solid var(--cp-cyan) !important;
+  border-radius: 2px !important;
+  clip-path: var(--cp-clip);
+  box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-cyan) 70%, transparent),
+    inset 0 0 calc(var(--cp-glow) / 2) color-mix(in srgb, var(--cp-cyan) 25%, transparent) !important;
 }
 
 #urlbar-input {
   text-align: center !important;
+  font-family: "Consolas", "Courier New", monospace !important;
+  color: var(--cp-cyan) !important;
+  text-shadow: 0 0 4px color-mix(in srgb, var(--cp-cyan) 60%, transparent) !important;
 }
 
 /* ---------------------- SIDEBAR (compact mode) ----------------------
    #titlebar is only the top strip of #navigator-toolbox, NOT the whole
-   compact sidebar - painting the glass only on #titlebar (as this used
-   to do) left the entire scrollable tab list underneath it with no
-   blur/tint at all, so pages bled straight through there. The glass
-   ::before now covers #navigator-toolbox itself (the actual full-height
-   sidebar container) instead.
+   compact sidebar. The panel below covers #navigator-toolbox itself
+   (the actual full-height sidebar container).
 
-   Remove the real background; paint our own ::before. The selector
-   intentionally does NOT exclude animation states, and we also paint
-   on the animating element, so the blur is not dropped after the
-   compact-mode animation finishes (cause of the original 1-second
-   flicker this mod was built around).
-
-   Deliberately NOT using overflow:hidden on #navigator-toolbox itself
-   (unlike the old #titlebar-only version) - it has real interactive
-   children (hover-preview thumbnails, dropdowns) that may need to
-   render outside its bounds; clipping the whole container could break
-   them. The rounded corners live on the ::before's own box instead.
-
-   Also deliberately NOT forcing position:relative on #navigator-toolbox
-   (an earlier version of this rule did, and it broke the compact-mode
-   hover overlay - the sidebar started pushing/resizing the page layout
-   instead of floating on top of it). #navigator-toolbox is presumably
-   already position:absolute/fixed natively so the overlay works at
-   all, which is just as valid an anchor for the ::before below as
-   relative would be - so there's nothing to override here. */
-@media (-moz-bool-pref: "zen.view.compact.hide-tabbar") {
-  .zen-browser-generic-background.zen-toolbar-background {
-    display: none !important;
-  }
-}
-
-/* No flat fill on the whole sidebar panel anymore - confirmed live that
-   backdrop-filter can't reliably sample across the chrome/content
-   process boundary at this scale (worked over Zen's own internal pages,
-   never over real web content), and a flat solid color here just reads
-   as a slab. Border-only wireframe, always visible, tinted to the
-   outline color; the actual "glass" now lives per-tab below where
-   blurring a small element has a real shot at working. */
+   No overflow:hidden on #navigator-toolbox (it has real interactive
+   children - hover-preview thumbnails, dropdowns - that may need to
+   render outside its bounds). No forced position:relative either (an
+   earlier version did, and it broke the compact-mode hover overlay -
+   the sidebar started pushing/resizing the page layout instead of
+   floating on top of it). */
 :root[zen-compact-mode="true"] #navigator-toolbox::before,
 :root[zen-compact-mode="true"] #navigator-toolbox[animate="true"]::before {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
-  background: transparent !important;
-  border: 1px solid var(--us-outline) !important;
-  border-radius: var(--zen-border-radius, 12px) !important;
+  background: var(--cp-scanlines), var(--cp-black) !important;
+  border: 2px solid var(--cp-cyan) !important;
+  box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-cyan) 50%, transparent) !important;
   z-index: -1 !important;
   pointer-events: none !important;
   transition: none !important;
 }
 
 /* #titlebar sits inside #navigator-toolbox and may carry its own opaque
-   background from Zen's native styles - neutralize it so the parent's
-   glass shows through instead of being blocked. */
+   background from Zen's native styles - neutralize it so the parent
+   panel shows through instead of being blocked. */
 :root[zen-compact-mode="true"] #titlebar {
   background: transparent !important;
 }
 
-/* Belt-and-suspenders: also clear default bg without the pref gate,
-   in case hide-tabbar is off. */
+@media (-moz-bool-pref: "zen.view.compact.hide-tabbar") {
+  .zen-browser-generic-background.zen-toolbar-background {
+    display: none !important;
+  }
+}
+
 :root[zen-compact-mode="true"] .zen-browser-generic-background.zen-toolbar-background {
   display: none !important;
 }
 
-/* ---------------------- TAB LEGIBILITY ----------------------
-   Blurring the whole content pane (an earlier version of this rule
-   did) fixes legibility but blurs the entire page while the sidebar is
-   open, which is heavier-handed than wanted. Scoped to each tab
-   instead: every tab (essential, pinned, or a regular workspace tab -
-   all share the same .tab-stack .tab-background element, confirmed via
-   another installed mod's own tab-background styling) gets its own
-   dark backing plate + optional blur, rather than touching the page.
+/* ---------------------- TABS ----------------------
+   Fully opaque now, so there's no legibility problem to fight (nothing
+   bleeds through a solid background) - the old text-shadow/backing-
+   plate hacks are gone, replaced with a plain neon glow for style.
 
-   Any tab - loaded or not - can end up sitting over a bright/busy page
-   peeking through the glass. Give every tab's label/icon a consistent
-   contrast boost so it stays readable regardless of what's behind it. */
+   Group identity (Zen-Tab-Groups' --group-color) still shows up via
+   that mod's own left-border strip on the outer tab element; this
+   mod only paints the inner .tab-stack .tab-background, so both
+   coexist without fighting each other. */
 .tabbrowser-tab .tab-label {
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+  font-family: "Consolas", "Courier New", monospace !important;
+  letter-spacing: 0.3px !important;
+  text-shadow: 0 0 3px color-mix(in srgb, var(--cp-cyan) 50%, transparent) !important;
 }
 
 .tabbrowser-tab .tab-icon-image {
-  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8)) !important;
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--cp-cyan) 60%, transparent)) !important;
 }
 
-/* Skip [selected]/[multiselected] so the native active-tab highlight
-   isn't fought.
-
-   Fixed midnight-purple-to-black diagonal gradient fill (90% opaque,
-   no backdrop-filter - see top-of-file note, confirmed twice not to
-   work here at any scale). The tab's own group color still shows up in
-   the border so groups stay distinguishable; the fill itself is the
-   same gradient everywhere for a cohesive dark look instead of every
-   group tinting the whole tab a different hue. */
+/* Default (idle) tab: solid black, cyan neon border. */
 .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background,
 #navigator-toolbox[animate="true"] .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background {
-  --us-tab-tint: var(--group-color, var(--us-tint-color));
-  background: var(--us-tab-gradient) !important;
-  border: 1px solid color-mix(in srgb, var(--us-tab-tint) 45%, transparent) !important;
-  border-radius: 8px !important;
+  background: var(--cp-black) !important;
+  border: 1px solid var(--cp-cyan) !important;
+  border-radius: 2px !important;
+  box-shadow: 0 0 calc(var(--cp-glow) / 2) color-mix(in srgb, var(--cp-cyan) 35%, transparent) !important;
   transition: none !important;
+}
+
+/* Hover: swap to yellow accent. */
+.tabbrowser-tab:hover:not([selected]):not([multiselected]) .tab-stack .tab-background {
+  background: var(--cp-black) !important;
+  border: 1px solid var(--cp-yellow) !important;
+  box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-yellow) 55%, transparent) !important;
+}
+
+/* Active/selected tab: red accent, the "you are here" marker. */
+.tabbrowser-tab[selected] .tab-stack .tab-background,
+.tabbrowser-tab[multiselected] .tab-stack .tab-background {
+  background: var(--cp-black) !important;
+  border: 1px solid var(--cp-red) !important;
+  border-radius: 2px !important;
+  box-shadow: 0 0 var(--cp-glow) color-mix(in srgb, var(--cp-red) 65%, transparent),
+    inset 0 0 calc(var(--cp-glow) / 2) color-mix(in srgb, var(--cp-red) 20%, transparent) !important;
+}
+
+.tabbrowser-tab[selected] .tab-label,
+.tabbrowser-tab[multiselected] .tab-label {
+  color: var(--cp-red) !important;
+  text-shadow: 0 0 4px color-mix(in srgb, var(--cp-red) 60%, transparent) !important;
 }
 
 /* This was never actually a timing/animation bug: Firefox/Zen dims an
    entire [pending]/[discarded] ("asleep") tab's opacity as its native
-   "not currently loaded" indicator. Since a parent's opacity multiplies
-   through everything inside it, that dimming was crushing this mod's
-   own background fill down to near-nothing along with it, regardless
-   of how opaque the fill itself was set to - confirmed by the user:
-   the one tab that kept a solid background was the "awake" one, every
-   dimmed/asleep tab around it lost its background. Restore the tab's
-   own opacity so the background renders at full strength, and move
-   the "this is asleep" visual cue to the icon only (desaturate + faint
-   dim) so legibility doesn't ride on the same mechanism as the sleep
-   indicator. */
+   "not currently loaded" indicator, which multiplies through every
+   child and crushed this mod's background fill along with it
+   regardless of the fill's own alpha. Restore the tab's own opacity
+   so the background renders at full strength, and put the "asleep"
+   cue on muted grey border/label/icon instead. */
 .tabbrowser-tab[pending],
 .tabbrowser-tab[discarded] {
   opacity: 1 !important;
@@ -191,25 +172,22 @@
 
 .tabbrowser-tab[pending] .tab-stack .tab-background,
 .tabbrowser-tab[discarded] .tab-stack .tab-background {
-  --us-tab-tint: var(--group-color, var(--us-tint-color));
-  background: var(--us-tab-gradient-dim) !important;
-  border: 1px solid color-mix(in srgb, var(--us-tab-tint) 25%, transparent) !important;
-  border-radius: 8px !important;
+  background: var(--cp-black) !important;
+  border: 1px solid #3a3a40 !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
   transition: none !important;
 }
 
-/* Asleep tabs read with the exact same text color as awake ones,
-   making sleep state hard to tell apart at a glance - grey the label
-   specifically so it's visually distinct, independent of the icon's
-   own desaturation below. */
 .tabbrowser-tab[pending] .tab-label,
 .tabbrowser-tab[discarded] .tab-label {
   opacity: 1 !important;
-  color: #9a9a9a !important;
+  color: #7a7a80 !important;
+  text-shadow: none !important;
 }
 
 .tabbrowser-tab[pending] .tab-icon-image,
 .tabbrowser-tab[discarded] .tab-icon-image {
-  opacity: 0.75 !important;
-  filter: grayscale(0.6) drop-shadow(0 0 2px rgba(0, 0, 0, 0.8)) !important;
+  opacity: 0.6 !important;
+  filter: grayscale(1) !important;
 }
