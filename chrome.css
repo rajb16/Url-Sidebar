@@ -1,34 +1,34 @@
 /* ============================================================
    URL & Sidebar Glass
-   Blue glass for the Zen URL bar and compact sidebar.
-   - Independent tint vs outline colors and opacities
+   Blue glass for the Zen URL bar; liquid-glass (blurred + tinted) tabs
+   in the compact sidebar.
+   - URL bar: solid blue glass, backdrop-filter confirmed reliable there
+   - Sidebar panel: border wireframe only, no flat fill
+   - Tabs: real backdrop-filter blur per tab, tinted with each tab's own
+     bar color (--group-color from Zen-Tab-Groups, or the fallback tint)
    - Animation-state guards so the blur is not stripped after load
    - Legibility boost for all tabs over bright/busy pages
    Controls live in preferences.json (mod.urlsidebar.* -> --mod-urlsidebar-*).
    ============================================================ */
 
 :root {
-  /* Fill (tint) - back to blue; violet was tried and rejected. */
+  /* Fill (tint) - blue; violet was tried and rejected. */
   --us-tint-color:   var(--mod-urlsidebar-tintcolor, #5a96ff);
   --us-tint-trans:   var(--mod-urlsidebar-tinttransparent, 40%);  /* % transparent */
   /* Outline */
   --us-outline-color: var(--mod-urlsidebar-outlinecolor, #5a96ff);
   --us-outline-trans: var(--mod-urlsidebar-outlinetransparent, 25%);
-  /* Blur */
+  /* Blur (URL bar) */
   --us-blur: var(--mod-urlsidebar-blur, 16px);
+  /* Blur/tint for individual tab rows - the "liquid glass" tabs. Kept
+     separate from --us-blur since tabs are small and want a lighter
+     tint than the URL bar's solid fill. */
+  --us-tab-blur: var(--mod-urlsidebar-tabblur, 14px);
+  --us-tab-tint-pct: var(--mod-urlsidebar-tabtintpct, 22%);
 
   /* Derived (do not edit) */
   --us-fill: color-mix(in srgb, var(--us-tint-color), transparent var(--us-tint-trans));
   --us-outline: color-mix(in srgb, var(--us-outline-color), transparent var(--us-outline-trans));
-  /* Darker variant for the sidebar specifically (not the URL bar) - the
-     tab rows sitting on top are dark-tinted for legibility, so a
-     bright fill in the gaps between them read as mismatched. Same tint
-     hue, mixed toward black instead of straight transparency. */
-  --us-sidebar-fill: color-mix(
-    in srgb,
-    color-mix(in srgb, var(--us-tint-color) 35%, black 65%),
-    transparent 15%
-  );
 }
 
 /* ---------------------- URL BAR ---------------------- */
@@ -80,27 +80,24 @@
   }
 }
 
+/* No flat fill on the whole sidebar panel anymore - confirmed live that
+   backdrop-filter can't reliably sample across the chrome/content
+   process boundary at this scale (worked over Zen's own internal pages,
+   never over real web content), and a flat solid color here just reads
+   as a slab. Border-only wireframe, always visible, tinted to the
+   outline color; the actual "glass" now lives per-tab below where
+   blurring a small element has a real shot at working. */
 :root[zen-compact-mode="true"] #navigator-toolbox::before,
 :root[zen-compact-mode="true"] #navigator-toolbox[animate="true"]::before {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
-  background: var(--us-sidebar-fill) !important;
+  background: transparent !important;
   border: 1px solid var(--us-outline) !important;
   border-radius: var(--zen-border-radius, 12px) !important;
   z-index: -1 !important;
   pointer-events: none !important;
-  /* Keep it painted through/after the compact animation. */
   transition: none !important;
-  /* No backdrop-filter here (deliberately - see below): confirmed live
-     that this mod's blur only ever rendered over Zen's own internal
-     chrome-privileged pages (e.g. about:preferences), never over real
-     web content (e.g. youtube.com) sitting in a separate content
-     process. backdrop-filter can't reliably sample across that
-     boundary, and worse, appears to break the plain background-color
-     on the SAME element too once it fails - so it wasn't just inert,
-     it was actively hurting the one thing (background-color) that did
-     work everywhere. Solid fill only, no blur attempt. */
 }
 
 /* #titlebar sits inside #navigator-toolbox and may carry its own opaque
@@ -139,28 +136,21 @@
 /* Skip [selected]/[multiselected] so the native active-tab highlight
    isn't fought.
 
-   Tinted from the tab's own tab-group color when it has one (Zen-Tab-
-   Groups sets --group-color on grouped tabs; falls back to this mod's
-   own tint for ungrouped tabs) rather than flat black, so each group
-   keeps some of its own identity instead of the whole sidebar reading
-   as one flat monotone panel. Still dark enough (82% mixed into black,
-   85% opaque overall) to stay legible - only a hint of hue shows
-   through, not a wash of full color.
-
-   No backdrop-filter (an earlier version had one "as a bonus" here) -
-   confirmed live that it only ever worked over Zen's own internal
-   chrome pages, never over real web content in a separate content
-   process, and appears to break the background-color on the same
-   element once it fails rather than just doing nothing. Plain
-   background-color is what actually renders reliably everywhere. */
+   "Liquid glass" per tab: real backdrop-filter blur + a light tint
+   from the tab's own bar color (Zen-Tab-Groups sets --group-color on
+   grouped tabs; falls back to this mod's own tint for ungrouped tabs),
+   no black mix. Earlier attempts put backdrop-filter on the whole
+   sidebar panel and it never rendered over real web content (only
+   Zen's own internal chrome pages) - but that was one huge element
+   compositing across the full chrome/content boundary. Each tab row is
+   tiny by comparison, so it gets its own real shot instead of assuming
+   the same failure applies at this scale. */
 .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background,
 #navigator-toolbox[animate="true"] .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background {
   --us-tab-tint: var(--group-color, var(--us-tint-color));
-  background-color: color-mix(
-    in srgb,
-    color-mix(in srgb, var(--us-tab-tint) 18%, black 82%),
-    transparent 15%
-  ) !important;
+  background-color: color-mix(in srgb, var(--us-tab-tint) var(--us-tab-tint-pct), transparent) !important;
+  backdrop-filter: blur(var(--us-tab-blur)) saturate(1.3) !important;
+  border: 1px solid color-mix(in srgb, var(--us-tab-tint) 45%, transparent) !important;
   border-radius: 8px !important;
   transition: none !important;
 }
@@ -185,11 +175,9 @@
 .tabbrowser-tab[pending] .tab-stack .tab-background,
 .tabbrowser-tab[discarded] .tab-stack .tab-background {
   --us-tab-tint: var(--group-color, var(--us-tint-color));
-  background-color: color-mix(
-    in srgb,
-    color-mix(in srgb, var(--us-tab-tint) 12%, black 88%),
-    transparent 8%
-  ) !important;
+  background-color: color-mix(in srgb, var(--us-tab-tint) 12%, transparent) !important;
+  backdrop-filter: blur(var(--us-tab-blur)) saturate(1.1) !important;
+  border: 1px solid color-mix(in srgb, var(--us-tab-tint) 25%, transparent) !important;
   border-radius: 8px !important;
   transition: none !important;
 }

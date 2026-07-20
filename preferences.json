@@ -40,8 +40,20 @@
   },
   {
     "property": "mod.urlsidebar.blur",
-    "label": "Blur strength for the URL bar only (e.g. 16px; use 0px for none). Sidebar/tab blur was removed - it only worked over Zen's own internal pages, never real web content.",
+    "label": "Blur strength for the URL bar (e.g. 16px; use 0px for none)",
     "type": "string",
     "defaultValue": "16px"
+  },
+  {
+    "property": "mod.urlsidebar.tabblur",
+    "label": "Blur strength for each tab's liquid-glass background (e.g. 14px)",
+    "type": "string",
+    "defaultValue": "14px"
+  },
+  {
+    "property": "mod.urlsidebar.tabtintpct",
+    "label": "How strong each awake tab's color tint is over the blur (e.g. 22%)",
+    "type": "string",
+    "defaultValue": "22%"
   }
 ]
