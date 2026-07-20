@@ -6,9 +6,9 @@
   },
   {
     "property": "mod.urlsidebar.tintcolor",
-    "label": "Tint color (hex or rgb, e.g. #8b5cf6)",
+    "label": "Tint color (hex or rgb, e.g. #5a96ff)",
     "type": "string",
-    "defaultValue": "#8b5cf6"
+    "defaultValue": "#5a96ff"
   },
   {
     "property": "mod.urlsidebar.tinttransparent",
@@ -23,9 +23,9 @@
   },
   {
     "property": "mod.urlsidebar.outlinecolor",
-    "label": "Outline color (hex or rgb, e.g. #a78bfa)",
+    "label": "Outline color (hex or rgb, e.g. #5a96ff)",
     "type": "string",
-    "defaultValue": "#a78bfa"
+    "defaultValue": "#5a96ff"
   },
   {
     "property": "mod.urlsidebar.outlinetransparent",

@@ -1,6 +1,6 @@
 /* ============================================================
    URL & Sidebar Glass
-   Violet glass for the Zen URL bar and compact sidebar.
+   Blue glass for the Zen URL bar and compact sidebar.
    - Independent tint vs outline colors and opacities
    - Animation-state guards so the blur is not stripped after load
    - Legibility boost for all tabs over bright/busy pages
@@ -8,12 +8,11 @@
    ============================================================ */
 
 :root {
-  /* Fill (tint) - violet/indigo, moved away from the original blue per
-     request ("overall theme is not my fav"). */
-  --us-tint-color:   var(--mod-urlsidebar-tintcolor, #8b5cf6);
+  /* Fill (tint) - back to blue; violet was tried and rejected. */
+  --us-tint-color:   var(--mod-urlsidebar-tintcolor, #5a96ff);
   --us-tint-trans:   var(--mod-urlsidebar-tinttransparent, 40%);  /* % transparent */
   /* Outline */
-  --us-outline-color: var(--mod-urlsidebar-outlinecolor, #a78bfa);
+  --us-outline-color: var(--mod-urlsidebar-outlinecolor, #5a96ff);
   --us-outline-trans: var(--mod-urlsidebar-outlinetransparent, 25%);
   /* Blur */
   --us-blur: var(--mod-urlsidebar-blur, 16px);
