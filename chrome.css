@@ -10,10 +10,10 @@
 :root {
   /* Fill (tint) */
   --us-tint-color:   var(--mod-urlsidebar-tintcolor, #5a96ff);
-  --us-tint-trans:   var(--mod-urlsidebar-tinttransparent, 65%);  /* % transparent */
+  --us-tint-trans:   var(--mod-urlsidebar-tinttransparent, 40%);  /* % transparent */
   /* Outline */
   --us-outline-color: var(--mod-urlsidebar-outlinecolor, #5a96ff);
-  --us-outline-trans: var(--mod-urlsidebar-outlinetransparent, 35%);
+  --us-outline-trans: var(--mod-urlsidebar-outlinetransparent, 25%);
   /* Blur */
   --us-blur: var(--mod-urlsidebar-blur, 16px);
 
@@ -120,20 +120,37 @@
    isn't fought. backdrop-filter is included as a bonus in case it
    helps for chrome-behind-chrome cases (essentials/pinned tabs sitting
    above other sidebar chrome rather than the page) - the background
-   color is what reliably carries the legibility improvement either way. */
-.tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background {
-  background-color: color-mix(in srgb, #000, transparent 72%) !important;
+   color is what reliably carries the legibility improvement either way.
+
+   Fairly opaque on purpose (22% transparent, was 72%) as a general
+   legibility margin.
+
+   Also duplicated for #navigator-toolbox[animate="true"] and given an
+   explicit transition:none, matching the pattern the sidebar-wide
+   glass ::before above already uses. Confirmed live (two screenshots
+   a user provided, same tab list, ~1s apart) that this mod's entire
+   glass effect - both the sidebar-wide tint AND these per-tab
+   backgrounds together - renders correctly for a moment then reverts
+   to fully transparent, which points to something removing/resetting
+   the mod's applied styles wholesale rather than a per-rule contrast
+   problem. Mirroring the one fix already proven to help this class of
+   issue elsewhere in this file is the most targeted next attempt. */
+.tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background,
+#navigator-toolbox[animate="true"] .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background {
+  background-color: color-mix(in srgb, #000, transparent 22%) !important;
   backdrop-filter: blur(6px) !important;
   -webkit-backdrop-filter: blur(6px) !important;
   border-radius: 8px !important;
+  transition: none !important;
 }
 
 /* Discarded/pending tabs render extra faint on top of that - give them
    a stronger backing plate. */
 .tabbrowser-tab[pending] .tab-stack .tab-background,
 .tabbrowser-tab[discarded] .tab-stack .tab-background {
-  background-color: color-mix(in srgb, #000, transparent 60%) !important;
+  background-color: color-mix(in srgb, #000, transparent 12%) !important;
   border-radius: 8px !important;
+  transition: none !important;
 }
 
 .tabbrowser-tab[pending] .tab-label,

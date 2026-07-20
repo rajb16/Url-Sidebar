@@ -14,7 +14,7 @@
     "property": "mod.urlsidebar.tinttransparent",
     "label": "Tint transparency (e.g. 82% = mostly clear, 20% = mostly solid)",
     "type": "string",
-    "defaultValue": "82%"
+    "defaultValue": "40%"
   },
   {
     "type": "separator",
@@ -31,7 +31,7 @@
     "property": "mod.urlsidebar.outlinetransparent",
     "label": "Outline transparency (e.g. 45%)",
     "type": "string",
-    "defaultValue": "45%"
+    "defaultValue": "35%"
   },
   {
     "type": "separator",
@@ -40,8 +40,8 @@
   },
   {
     "property": "mod.urlsidebar.blur",
-    "label": "Blur strength (e.g. 10px; use 0px for none)",
+    "label": "Blur strength (e.g. 16px; use 0px for none)",
     "type": "string",
-    "defaultValue": "10px"
+    "defaultValue": "16px"
   }
 ]
