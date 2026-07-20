@@ -10,12 +10,12 @@
 :root {
   /* Fill (tint) */
   --us-tint-color:   var(--mod-urlsidebar-tintcolor, #5a96ff);
-  --us-tint-trans:   var(--mod-urlsidebar-tinttransparent, 82%);  /* % transparent */
+  --us-tint-trans:   var(--mod-urlsidebar-tinttransparent, 65%);  /* % transparent */
   /* Outline */
   --us-outline-color: var(--mod-urlsidebar-outlinecolor, #5a96ff);
-  --us-outline-trans: var(--mod-urlsidebar-outlinetransparent, 45%);
+  --us-outline-trans: var(--mod-urlsidebar-outlinetransparent, 35%);
   /* Blur */
-  --us-blur: var(--mod-urlsidebar-blur, 10px);
+  --us-blur: var(--mod-urlsidebar-blur, 16px);
 
   /* Derived (do not edit) */
   --us-fill: color-mix(in srgb, var(--us-tint-color), transparent var(--us-tint-trans));
@@ -96,6 +96,31 @@
   display: none !important;
 }
 
+/* ---------------------- CONTENT BLUR WHILE SIDEBAR IS SHOWN ----------------------
+   backdrop-filter on the ::before above tries to blur the web page by
+   sampling what's behind a chrome-privileged overlay - Firefox renders
+   chrome UI and page content in separate processes/compositor layers,
+   and that cross-boundary sampling is not reliable (in testing here it
+   produced no visible blur at all regardless of how strong the value
+   was). Directly blurring the content pane itself - the same technique
+   another installed mod uses for its own zoom animation - is a
+   straightforward, reliable substitute: it blurs the source instead of
+   trying to sample it from the overlay.
+
+   [zen-has-hover="true"] / [zen-user-show=""] / [has-popup-menu=""] are
+   the states Zen uses to mark "the compact sidebar is currently
+   revealed" (confirmed via another installed mod's mask-image rule for
+   the same sidebar). */
+:root[zen-compact-mode="true"]:has(
+    #navigator-toolbox[zen-has-hover="true"],
+    [zen-user-show=""],
+    [has-popup-menu=""]
+  )
+  #tabbrowser-tabpanels {
+  filter: blur(var(--us-blur)) brightness(0.75) !important;
+  transition: filter 0.15s ease-in-out !important;
+}
+
 /* ---------------------- TAB LEGIBILITY ----------------------
    Any tab - loaded or not - can end up sitting over a bright/busy page
    peeking through the glass. Give every tab's label/icon a consistent
@@ -108,11 +133,19 @@
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8)) !important;
 }
 
+/* Text-shadow alone wasn't enough against busy thumbnails - give every
+   non-selected tab a subtle dark backing plate too (skip [selected]/
+   [multiselected] so the native active-tab highlight isn't fought). */
+.tabbrowser-tab:not([selected]):not([multiselected]) .tab-content {
+  background: color-mix(in srgb, #000, transparent 80%) !important;
+  border-radius: 8px !important;
+}
+
 /* Discarded/pending tabs render extra faint on top of that - give them
-   a subtle backing plate as well. */
+   a stronger backing plate. */
 .tabbrowser-tab[pending] .tab-content,
 .tabbrowser-tab[discarded] .tab-content {
-  background: color-mix(in srgb, #000, transparent 70%) !important;
+  background: color-mix(in srgb, #000, transparent 65%) !important;
   border-radius: 8px !important;
 }
 
