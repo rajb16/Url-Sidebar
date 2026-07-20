@@ -20,6 +20,15 @@
   /* Derived (do not edit) */
   --us-fill: color-mix(in srgb, var(--us-tint-color), transparent var(--us-tint-trans));
   --us-outline: color-mix(in srgb, var(--us-outline-color), transparent var(--us-outline-trans));
+  /* Darker variant for the sidebar specifically (not the URL bar) - the
+     tab rows sitting on top are dark-tinted for legibility, so a
+     bright fill in the gaps between them read as mismatched. Same tint
+     hue, mixed toward black instead of straight transparency. */
+  --us-sidebar-fill: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--us-tint-color) 35%, black 65%),
+    transparent 15%
+  );
 }
 
 /* ---------------------- URL BAR ---------------------- */
@@ -72,7 +81,7 @@
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
-  background: var(--us-fill) !important;
+  background: var(--us-sidebar-fill) !important;
   border: 1px solid var(--us-outline) !important;
   border-radius: var(--zen-border-radius, 12px) !important;
   backdrop-filter: blur(var(--us-blur)) !important;
@@ -122,11 +131,21 @@
    above other sidebar chrome rather than the page) - the background
    color is what reliably carries the legibility improvement either way.
 
-   Fairly opaque on purpose (22% transparent, was 72%) as a general
-   legibility margin. */
+   Tinted from the tab's own tab-group color when it has one (Zen-Tab-
+   Groups sets --group-color on grouped tabs; falls back to this mod's
+   own blue tint for ungrouped tabs) rather than flat black, so each
+   group keeps some of its own identity instead of the whole sidebar
+   reading as one flat monotone panel. Still dark enough (82% mixed
+   into black, 85% opaque overall) to stay legible - only a hint of hue
+   shows through, not a wash of full color. */
 .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background,
 #navigator-toolbox[animate="true"] .tabbrowser-tab:not([selected]):not([multiselected]) .tab-stack .tab-background {
-  background-color: color-mix(in srgb, #000, transparent 22%) !important;
+  --us-tab-tint: var(--group-color, var(--us-tint-color));
+  background-color: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--us-tab-tint) 18%, black 82%),
+    transparent 15%
+  ) !important;
   backdrop-filter: blur(6px) !important;
   -webkit-backdrop-filter: blur(6px) !important;
   border-radius: 8px !important;
@@ -152,7 +171,12 @@
 
 .tabbrowser-tab[pending] .tab-stack .tab-background,
 .tabbrowser-tab[discarded] .tab-stack .tab-background {
-  background-color: color-mix(in srgb, #000, transparent 12%) !important;
+  --us-tab-tint: var(--group-color, var(--us-tint-color));
+  background-color: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--us-tab-tint) 12%, black 88%),
+    transparent 8%
+  ) !important;
   border-radius: 8px !important;
   transition: none !important;
 }
