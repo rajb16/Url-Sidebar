@@ -9,9 +9,9 @@
   },
   "preferences": "preferences.json",
   "author": "rajb16",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "tags": [],
   "fork": ["zen"],
   "createdAt": "2026-06-28",
-  "updatedAt": "2026-07-21T00:24:33Z"
+  "updatedAt": "2026-07-21T00:30:02Z"
 }

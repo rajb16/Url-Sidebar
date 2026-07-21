@@ -53,8 +53,8 @@
   },
   {
     "property": "mod.urlsidebar.sidebarbottomgap",
-    "label": "Gap between the sidebar's bottom edge and the window's bottom edge (e.g. 15px)",
+    "label": "Gap between the sidebar's bottom edge and the window's bottom edge (e.g. 10px)",
     "type": "string",
-    "defaultValue": "15px"
+    "defaultValue": "10px"
   }
 ]

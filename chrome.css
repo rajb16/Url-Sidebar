@@ -27,7 +27,7 @@
      left unset (see the rule below) so the browser computes it from
      these two instead of us guessing/hardcoding a top offset too. */
   --cp-sidebar-height: var(--mod-urlsidebar-sidebarheight, 1370px);
-  --cp-sidebar-bottom-gap: var(--mod-urlsidebar-sidebarbottomgap, 15px);
+  --cp-sidebar-bottom-gap: var(--mod-urlsidebar-sidebarbottomgap, 10px);
 
   /* Angular corner-cut shape shared by panels (top-left + bottom-right
      notched) - the sharp-edged look cyberpunk HUDs use instead of
@@ -93,7 +93,17 @@
    the whole box instead of resizing it). */
 :root[zen-compact-mode="true"] #navigator-toolbox {
   height: var(--cp-sidebar-height) !important;
+  max-height: var(--cp-sidebar-height) !important;
   bottom: var(--cp-sidebar-bottom-gap) !important;
+  /* Belt-and-suspenders in case this element is actually flex-sized
+     rather than absolutely positioned (unverified assumption - height
+     alone not visibly shrinking it suggests that guess may be wrong).
+     A flex item's explicit height can get ignored in favor of its
+     flex-basis/grow/shrink - forcing flex-basis to the same value and
+     killing grow/shrink stops the flex algorithm from overriding it. */
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+  flex-basis: var(--cp-sidebar-height) !important;
 }
 
 :root[zen-compact-mode="true"] #navigator-toolbox::before,
