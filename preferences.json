@@ -46,9 +46,15 @@
     "defaultValue": "10px"
   },
   {
-    "property": "mod.urlsidebar.sidebartopoffset",
-    "label": "How far to push the sidebar down from the very top of the window, to align it with the content view below (e.g. 18px)",
+    "property": "mod.urlsidebar.sidebarheight",
+    "label": "Fixed height of the sidebar (e.g. 1370px)",
     "type": "string",
-    "defaultValue": "18px"
+    "defaultValue": "1370px"
+  },
+  {
+    "property": "mod.urlsidebar.sidebarbottomgap",
+    "label": "Gap between the sidebar's bottom edge and the window's bottom edge (e.g. 15px)",
+    "type": "string",
+    "defaultValue": "15px"
   }
 ]

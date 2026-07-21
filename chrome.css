@@ -22,11 +22,12 @@
   --cp-red:    var(--mod-urlsidebar-redcolor, #ff003c);
   --cp-glow:   var(--mod-urlsidebar-glowintensity, 8px);
   --cp-cut:    var(--mod-urlsidebar-cornercut, 10px);
-  /* The sidebar natively spans the full window height (inset:0),
-     starting above where the content pane's own view actually begins.
-     Pushes it down/shrinks it from the top only - the bottom already
-     aligns closely with the content view without any adjustment. */
-  --cp-sidebar-top: var(--mod-urlsidebar-sidebartopoffset, 18px);
+  /* Exact sizing for the sidebar element - fixed height, anchored a
+     fixed gap above the window's bottom edge. `top` is deliberately
+     left unset (see the rule below) so the browser computes it from
+     these two instead of us guessing/hardcoding a top offset too. */
+  --cp-sidebar-height: var(--mod-urlsidebar-sidebarheight, 1370px);
+  --cp-sidebar-bottom-gap: var(--mod-urlsidebar-sidebarbottomgap, 15px);
 
   /* Angular corner-cut shape shared by panels (top-left + bottom-right
      notched) - the sharp-edged look cyberpunk HUDs use instead of
@@ -81,22 +82,18 @@
    earlier version did, and it broke the compact-mode hover overlay -
    the sidebar started pushing/resizing the page layout instead of
    floating on top of it). */
-/* Shrinks the real sidebar element from the top so it (and everything
-   in it - tabs, pinned, essentials) starts aligned with the content
-   view instead of extending above it. Only overriding `top`/`height`,
-   not `position` itself (which is already absolute/fixed natively) - a
-   previous attempt at forcing position:relative here broke the
-   compact-mode hover overlay, this is a much smaller change.
-
-   `top` alone isn't enough: Zen sets an explicit native height here,
-   not top+bottom insets, so changing only `top` just SHIFTS the whole
-   box down by that amount (confirmed live - the bottom then got cut
-   off, pushed past where it used to end, instead of the box shrinking
-   from the top like intended). Explicitly reducing `height` by the
-   same offset keeps the bottom edge anchored where it already was. */
+/* Fixed height, anchored a fixed gap above the window's bottom edge.
+   `top` is deliberately NOT set here - only `height` and `bottom` are
+   constrained (both explicit user-measured values), so the browser
+   computes `top` on its own to satisfy both simultaneously rather than
+   us hardcoding a third value that would over-constrain the box
+   (setting all three of top/height/bottom at once means the browser
+   ignores one of them anyway - leaving top out avoids that entirely,
+   and is also what earlier attempts got wrong: changing `top` shifted
+   the whole box instead of resizing it). */
 :root[zen-compact-mode="true"] #navigator-toolbox {
-  top: var(--cp-sidebar-top) !important;
-  height: calc(100% - var(--cp-sidebar-top)) !important;
+  height: var(--cp-sidebar-height) !important;
+  bottom: var(--cp-sidebar-bottom-gap) !important;
 }
 
 :root[zen-compact-mode="true"] #navigator-toolbox::before,
