@@ -22,11 +22,9 @@
   --cp-red:    var(--mod-urlsidebar-redcolor, #ff003c);
   --cp-glow:   var(--mod-urlsidebar-glowintensity, 8px);
   --cp-cut:    var(--mod-urlsidebar-cornercut, 10px);
-  /* Exact sizing for the sidebar element - fixed height, anchored a
-     fixed gap above the window's bottom edge. `top` is deliberately
-     left unset (see the rule below) so the browser computes it from
-     these two instead of us guessing/hardcoding a top offset too. */
-  --cp-sidebar-height: var(--mod-urlsidebar-sidebarheight, 1370px);
+  /* Gap between the sidebar's bottom edge and the window's bottom -
+     used as the subtracted amount in the max-height cap below, so the
+     sidebar scales with the actual window instead of a fixed number. */
   --cp-sidebar-bottom-gap: var(--mod-urlsidebar-sidebarbottomgap, 10px);
 
   /* Angular corner-cut shape shared by panels (top-left + bottom-right
@@ -82,17 +80,21 @@
    earlier version did, and it broke the compact-mode hover overlay -
    the sidebar started pushing/resizing the page layout instead of
    floating on top of it). */
-/* REVERTED (2026-07-21): height/bottom didn't visibly shrink the
-   sidebar, and adding flex-grow/shrink/basis on top of that actively
-   made it "massive" - if the flex container's main axis turned out to
-   be horizontal rather than vertical, flex-basis would size its WIDTH,
-   not height, which fits exactly what got reported. That confirms the
-   position/layout-mode assumption behind this whole rule was wrong and
-   guessing more properties blind isn't working - next step is
-   inspecting #navigator-toolbox's actual computed position/display via
-   the Browser Toolbox before touching this again. No override for now
-   (back to native sizing) so nothing is actively broken in the
-   meantime. */
+/* Confirmed via the Browser Toolbox inspector: #navigator-toolbox's
+   inline style shows `width: 500px` (a totally normal sidebar width,
+   resized by a horizontal-orientation splitter) - it is NOT sized by
+   height at all natively. Its height is content-driven (auto - grows
+   to fit the titlebar plus every workspace/pinned-tab/group row
+   stacked inside it), which is why a plain `height` override had zero
+   visible effect: an auto-sized box's height isn't being constrained
+   by anything for `height` to override, it just grows with content
+   regardless. `max-height` is the right tool for capping that kind of
+   intrinsic growth. Viewport units (not a fixed px value, not % of a
+   possibly-also-auto-sized ancestor) so it scales with the actual
+   browser window instead of a hardcoded number. */
+:root[zen-compact-mode="true"] #navigator-toolbox {
+  max-height: calc(100vh - var(--cp-sidebar-bottom-gap)) !important;
+}
 
 :root[zen-compact-mode="true"] #navigator-toolbox::before,
 :root[zen-compact-mode="true"] #navigator-toolbox[animate="true"]::before {

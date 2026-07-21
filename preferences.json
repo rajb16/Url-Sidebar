@@ -46,12 +46,6 @@
     "defaultValue": "10px"
   },
   {
-    "property": "mod.urlsidebar.sidebarheight",
-    "label": "Fixed height of the sidebar (e.g. 1370px)",
-    "type": "string",
-    "defaultValue": "1370px"
-  },
-  {
     "property": "mod.urlsidebar.sidebarbottomgap",
     "label": "Gap between the sidebar's bottom edge and the window's bottom edge (e.g. 10px)",
     "type": "string",
