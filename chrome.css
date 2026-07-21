@@ -82,29 +82,17 @@
    earlier version did, and it broke the compact-mode hover overlay -
    the sidebar started pushing/resizing the page layout instead of
    floating on top of it). */
-/* Fixed height, anchored a fixed gap above the window's bottom edge.
-   `top` is deliberately NOT set here - only `height` and `bottom` are
-   constrained (both explicit user-measured values), so the browser
-   computes `top` on its own to satisfy both simultaneously rather than
-   us hardcoding a third value that would over-constrain the box
-   (setting all three of top/height/bottom at once means the browser
-   ignores one of them anyway - leaving top out avoids that entirely,
-   and is also what earlier attempts got wrong: changing `top` shifted
-   the whole box instead of resizing it). */
-:root[zen-compact-mode="true"] #navigator-toolbox {
-  height: var(--cp-sidebar-height) !important;
-  max-height: var(--cp-sidebar-height) !important;
-  bottom: var(--cp-sidebar-bottom-gap) !important;
-  /* Belt-and-suspenders in case this element is actually flex-sized
-     rather than absolutely positioned (unverified assumption - height
-     alone not visibly shrinking it suggests that guess may be wrong).
-     A flex item's explicit height can get ignored in favor of its
-     flex-basis/grow/shrink - forcing flex-basis to the same value and
-     killing grow/shrink stops the flex algorithm from overriding it. */
-  flex-grow: 0 !important;
-  flex-shrink: 0 !important;
-  flex-basis: var(--cp-sidebar-height) !important;
-}
+/* REVERTED (2026-07-21): height/bottom didn't visibly shrink the
+   sidebar, and adding flex-grow/shrink/basis on top of that actively
+   made it "massive" - if the flex container's main axis turned out to
+   be horizontal rather than vertical, flex-basis would size its WIDTH,
+   not height, which fits exactly what got reported. That confirms the
+   position/layout-mode assumption behind this whole rule was wrong and
+   guessing more properties blind isn't working - next step is
+   inspecting #navigator-toolbox's actual computed position/display via
+   the Browser Toolbox before touching this again. No override for now
+   (back to native sizing) so nothing is actively broken in the
+   meantime. */
 
 :root[zen-compact-mode="true"] #navigator-toolbox::before,
 :root[zen-compact-mode="true"] #navigator-toolbox[animate="true"]::before {
