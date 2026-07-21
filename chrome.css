@@ -83,14 +83,20 @@
    floating on top of it). */
 /* Shrinks the real sidebar element from the top so it (and everything
    in it - tabs, pinned, essentials) starts aligned with the content
-   view instead of extending above it. Only overriding `top`, not
-   `position` itself (which is already absolute/fixed natively) - a
+   view instead of extending above it. Only overriding `top`/`height`,
+   not `position` itself (which is already absolute/fixed natively) - a
    previous attempt at forcing position:relative here broke the
-   compact-mode hover overlay, this is a much smaller change. Since the
-   native rule already anchors the bottom, pushing just the top down
-   shrinks the total height too rather than only moving it. */
+   compact-mode hover overlay, this is a much smaller change.
+
+   `top` alone isn't enough: Zen sets an explicit native height here,
+   not top+bottom insets, so changing only `top` just SHIFTS the whole
+   box down by that amount (confirmed live - the bottom then got cut
+   off, pushed past where it used to end, instead of the box shrinking
+   from the top like intended). Explicitly reducing `height` by the
+   same offset keeps the bottom edge anchored where it already was. */
 :root[zen-compact-mode="true"] #navigator-toolbox {
   top: var(--cp-sidebar-top) !important;
+  height: calc(100% - var(--cp-sidebar-top)) !important;
 }
 
 :root[zen-compact-mode="true"] #navigator-toolbox::before,
