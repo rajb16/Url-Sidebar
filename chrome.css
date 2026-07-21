@@ -22,6 +22,11 @@
   --cp-red:    var(--mod-urlsidebar-redcolor, #ff003c);
   --cp-glow:   var(--mod-urlsidebar-glowintensity, 8px);
   --cp-cut:    var(--mod-urlsidebar-cornercut, 10px);
+  /* The sidebar natively spans the full window height (inset:0),
+     starting above where the content pane's own view actually begins.
+     Pushes it down/shrinks it from the top only - the bottom already
+     aligns closely with the content view without any adjustment. */
+  --cp-sidebar-top: var(--mod-urlsidebar-sidebartopoffset, 18px);
 
   /* Angular corner-cut shape shared by panels (top-left + bottom-right
      notched) - the sharp-edged look cyberpunk HUDs use instead of
@@ -76,6 +81,18 @@
    earlier version did, and it broke the compact-mode hover overlay -
    the sidebar started pushing/resizing the page layout instead of
    floating on top of it). */
+/* Shrinks the real sidebar element from the top so it (and everything
+   in it - tabs, pinned, essentials) starts aligned with the content
+   view instead of extending above it. Only overriding `top`, not
+   `position` itself (which is already absolute/fixed natively) - a
+   previous attempt at forcing position:relative here broke the
+   compact-mode hover overlay, this is a much smaller change. Since the
+   native rule already anchors the bottom, pushing just the top down
+   shrinks the total height too rather than only moving it. */
+:root[zen-compact-mode="true"] #navigator-toolbox {
+  top: var(--cp-sidebar-top) !important;
+}
+
 :root[zen-compact-mode="true"] #navigator-toolbox::before,
 :root[zen-compact-mode="true"] #navigator-toolbox[animate="true"]::before {
   content: "" !important;

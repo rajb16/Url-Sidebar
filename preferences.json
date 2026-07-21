@@ -44,5 +44,11 @@
     "label": "Angular corner-cut size for panels/URL bar (e.g. 10px; use 0px for square corners)",
     "type": "string",
     "defaultValue": "10px"
+  },
+  {
+    "property": "mod.urlsidebar.sidebartopoffset",
+    "label": "How far to push the sidebar down from the very top of the window, to align it with the content view below (e.g. 18px)",
+    "type": "string",
+    "defaultValue": "18px"
   }
 ]
